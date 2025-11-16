@@ -7,9 +7,9 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 export const LogoIcon: React.FC<IconProps> = (props) => (
     <svg viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-        <text x="0" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" fill="#0ea5e9">Digital </text>
-        <text x="85" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" fill="#94a3b8">Humans</text>
-        <text x="0" y="44" fontFamily="Poppins, sans-serif" fontSize="9" fill="#64748b">AI-Powered Salesforce Automation</text>
+        <text x="0" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-sky-500">Digital </text>
+        <text x="85" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-slate-700 dark:fill-slate-400">Humans</text>
+        <text x="0" y="44" fontFamily="Poppins, sans-serif" fontSize="9" className="fill-slate-500">AI-Powered Salesforce Automation</text>
     </svg>
 );
 
@@ -85,4 +85,16 @@ export const DocsIcon: React.FC<IconProps> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
     </svg>
+);
+
+export const SunIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+  </svg>
+);
+
+export const MoonIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25c0 5.385 4.365 9.75 9.75 9.75 2.572 0 4.92-.99 6.697-2.648z" />
+  </svg>
 );

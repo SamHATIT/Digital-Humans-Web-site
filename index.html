@@ -8,11 +8,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Poppins', sans-serif;
+    <script>
+      // Configure Tailwind CSS to use the 'selector' strategy for dark mode
+      // and to use the Poppins font.
+      tailwind.config = {
+        darkMode: 'selector',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+            },
+          }
+        }
       }
-    </style>
+    </script>
+    <script>
+        // Set theme on initial load to prevent FOUC (Flash of Unstyled Content)
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 <script type="importmap">
 {
   "imports": {
@@ -23,7 +40,7 @@
 }
 </script>
 </head>
-<body class="bg-slate-900 text-slate-100 antialiased">
+<body class="font-sans antialiased bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

@@ -9,8 +9,8 @@ import Footer from './components/Footer';
 
 const App: React.FC = () => {
     return (
-        <div className="bg-slate-900 min-h-screen overflow-x-hidden">
-            <div className="absolute top-0 left-0 w-full h-full bg-grid-slate-700/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_100%)]"></div>
+        <div className="min-h-screen overflow-x-hidden">
+            <div className="absolute top-0 left-0 w-full h-full bg-grid-slate-200/[0.5] dark:bg-grid-slate-700/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_100%)]"></div>
             <Header />
             <main className="relative z-10">
                 <Hero />
