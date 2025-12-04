@@ -8,7 +8,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 export const LogoIcon: React.FC<IconProps> = (props) => (
     <svg viewBox="0 0 250 50" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
         <text x="0" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-sky-500">Digital-</text>
-        <text x="85" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-slate-700 dark:fill-slate-400">Humans.fr</text>
+        <text x="73" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-slate-700 dark:fill-slate-400">Humans.fr</text>
         <text x="0" y="44" fontFamily="Poppins, sans-serif" fontSize="9" className="fill-slate-500">AI-Powered Salesforce Automation</text>
     </svg>
 );

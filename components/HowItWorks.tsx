@@ -21,22 +21,27 @@ const HowItWorks: React.FC = () => {
                 </div>
                 <div className="relative">
                     <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700 hidden md:block" aria-hidden="true"></div>
-                    <div className="space-y-12 md:space-y-0">
+                    <div className="space-y-12 md:space-y-8">
                         {steps.map((step, index) => (
-                            <div key={index} className={`relative flex flex-col md:flex-row items-center md:justify-between ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                                <div className={`md:w-5/12 ${index % 2 === 0 ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'}`}>
-                                    <div className={`inline-flex items-center justify-center h-10 w-10 rounded-full bg-sky-500 text-white font-bold text-lg mb-4`}>
+                            <div key={index} className={`relative flex flex-col md:flex-row items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                                {/* Text side */}
+                                <div className={`md:w-5/12 ${index % 2 === 0 ? 'md:text-right md:pr-8' : 'md:text-left md:pl-8'}`}>
+                                    <div className={`inline-flex items-center justify-center h-8 w-8 rounded-full bg-sky-500 text-white font-bold text-sm mb-2`}>
                                         {index + 1}
                                     </div>
-                                    <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t(step.titleKey)}</h3>
-                                    <p className="mt-2 text-slate-600 dark:text-slate-400">{t(step.descKey)}</p>
+                                    <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t(step.titleKey)}</h3>
+                                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{t(step.descKey)}</p>
                                 </div>
-                                <div className={`relative flex items-center justify-center my-4 md:my-0`}>
-                                    <div className={`absolute top-1/2 -translate-y-1/2 hidden md:block w-4 h-4 rounded-full bg-sky-500 z-10 ${index % 2 === 0 ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'}`}></div>
+                                
+                                {/* Center line dot */}
+                                <div className="hidden md:flex md:w-2/12 justify-center">
+                                    <div className="w-3 h-3 rounded-full bg-sky-500 z-10"></div>
                                 </div>
-                                <div className={`md:w-5/12 flex ${index % 2 === 0 ? 'md:justify-start md:pl-12' : 'md:justify-end md:pr-12'}`}>
-                                    <div className="p-4 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
-                                        <step.icon className="w-16 h-16 text-sky-500" />
+                                
+                                {/* Icon side - aligned with text */}
+                                <div className={`md:w-5/12 flex items-center ${index % 2 === 0 ? 'md:justify-start md:pl-8' : 'md:justify-end md:pr-8'} mt-4 md:mt-0`}>
+                                    <div className="p-3 bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-700/50">
+                                        <step.icon className="w-10 h-10 text-sky-500" />
                                     </div>
                                 </div>
                             </div>
