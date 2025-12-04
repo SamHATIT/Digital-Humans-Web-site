@@ -1,20 +1,22 @@
 import React from 'react';
 import { ArrowRightIcon } from './icons';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const CTA: React.FC = () => {
+    const { t } = useLanguage();
+    
     return (
         <section id="cta" className="py-20 sm:py-28">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="relative bg-gradient-to-r from-sky-500 to-indigo-600 rounded-2xl p-8 md:p-12 text-center overflow-hidden">
-                    <div className="absolute inset-0 bg-grid-slate-900/[0.1] [mask-image:linear-gradient(to_bottom,white_50%,transparent_100%)]"></div>
-                    <div className="relative">
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Ready to Automate Your Salesforce Projects?</h2>
-                        <p className="mt-4 max-w-2xl mx-auto text-lg text-sky-100">
-                           Schedule a demo to see our AI agents in action and discover how we can transform your development pipeline.
-                        </p>
+                <div className="relative rounded-3xl bg-gradient-to-br from-sky-500 to-indigo-600 p-10 md:p-16 text-center overflow-hidden">
+                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                     <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                    <div className="relative z-10">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-white">{t('cta.title')}</h2>
+                        <p className="mt-4 text-lg text-sky-100 max-w-2xl mx-auto">{t('cta.subtitle')}</p>
                         <div className="mt-8">
-                             <a href="#" className="bg-white text-sky-600 px-8 py-3 rounded-md text-lg font-semibold hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center max-w-xs mx-auto group">
-                                Request a Demo <ArrowRightIcon className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                            <a href="mailto:contact@digital-humans.fr" className="inline-flex items-center bg-white text-sky-600 px-8 py-3 rounded-md text-lg font-semibold hover:bg-sky-50 transition-all duration-300 transform hover:scale-105 shadow-lg group">
+                                {t('cta.button')} <ArrowRightIcon className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                             </a>
                         </div>
                     </div>

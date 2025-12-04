@@ -1,21 +1,4 @@
-// FIX: Import React to make the React namespace available for type definitions.
-import type React from 'react';
+// Types file - currently empty as types are now defined locally in components
+// This file is kept for potential future shared types
 
-export interface Agent {
-  firstName: string;
-  role: string;
-  description: string;
-  avatar: string;
-}
-
-export interface Step {
-  title: string;
-  description: string;
-  icon: React.ElementType;
-}
-
-export interface Benefit {
-  title: string;
-  description: string;
-  icon: React.ElementType;
-}
+export {};
