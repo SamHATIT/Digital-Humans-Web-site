@@ -23,7 +23,7 @@ const HowItWorks: React.FC = () => {
                     <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700 hidden md:block" aria-hidden="true"></div>
                     <div className="space-y-12 md:space-y-8">
                         {steps.map((step, index) => (
-                            <div key={index} className={`relative flex flex-col md:flex-row items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                            <div key={index} className={`relative flex flex-col md:flex-row items-end ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                                 {/* Text side */}
                                 <div className={`md:w-5/12 ${index % 2 === 0 ? 'md:text-right md:pr-8' : 'md:text-left md:pl-8'}`}>
                                     <div className={`inline-flex items-center justify-center h-8 w-8 rounded-full bg-sky-500 text-white font-bold text-sm mb-2`}>
@@ -34,12 +34,12 @@ const HowItWorks: React.FC = () => {
                                 </div>
                                 
                                 {/* Center line dot */}
-                                <div className="hidden md:flex md:w-2/12 justify-center">
+                                <div className="hidden md:flex md:w-2/12 justify-center items-end pb-1">
                                     <div className="w-3 h-3 rounded-full bg-sky-500 z-10"></div>
                                 </div>
                                 
-                                {/* Icon side - aligned with text */}
-                                <div className={`md:w-5/12 flex items-center ${index % 2 === 0 ? 'md:justify-start md:pl-8' : 'md:justify-end md:pr-8'} mt-4 md:mt-0`}>
+                                {/* Icon side - aligned to bottom */}
+                                <div className={`md:w-5/12 flex items-end ${index % 2 === 0 ? 'md:justify-start md:pl-8' : 'md:justify-end md:pr-8'} mt-4 md:mt-0`}>
                                     <div className="p-3 bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-700/50">
                                         <step.icon className="w-10 h-10 text-sky-500" />
                                     </div>
