@@ -6,9 +6,9 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const LogoIcon: React.FC<IconProps> = (props) => (
-    <svg viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-        <text x="0" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-sky-500">Digital </text>
-        <text x="85" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-slate-700 dark:fill-slate-400">Humans</text>
+    <svg viewBox="0 0 250 50" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <text x="0" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-sky-500">Digital-</text>
+        <text x="85" y="28" fontFamily="Poppins, sans-serif" fontSize="20" fontWeight="bold" className="fill-slate-700 dark:fill-slate-400">Humans.fr</text>
         <text x="0" y="44" fontFamily="Poppins, sans-serif" fontSize="9" className="fill-slate-500">AI-Powered Salesforce Automation</text>
     </svg>
 );
@@ -97,4 +97,9 @@ export const MoonIcon: React.FC<IconProps> = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25c0 5.385 4.365 9.75 9.75 9.75 2.572 0 4.92-.99 6.697-2.648z" />
   </svg>
+);
+export const SecurityIcon: React.FC<IconProps> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286z" />
+    </svg>
 );

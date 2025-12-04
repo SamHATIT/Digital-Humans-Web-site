@@ -4,12 +4,17 @@ import type { Agent } from '../types';
 
 const AgentCard: React.FC<{ agent: Agent }> = ({ agent }) => {
     return (
-        <div className="bg-slate-100/50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50 text-center flex flex-col items-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-             <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-slate-200 dark:bg-slate-700 text-sky-500 dark:text-sky-400 mb-4">
-                <agent.icon className="w-6 h-6" />
+        <div className="bg-slate-100/50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50 text-center flex flex-col items-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hover:scale-105 transform duration-300">
+             <div className="mb-3">
+                <img 
+                    src={agent.avatar} 
+                    alt={agent.firstName} 
+                    className="w-20 h-20 rounded-full object-cover border-2 border-sky-500/30 shadow-lg"
+                />
             </div>
-            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base">{agent.name}</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 flex-grow">{agent.role}</p>
+            <h3 className="font-bold text-sky-500 dark:text-sky-400 text-lg">{agent.firstName}</h3>
+            <p className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{agent.role}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex-grow">{agent.description}</p>
         </div>
     )
 }
@@ -24,7 +29,7 @@ const OurAgents: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
                     {AGENTS.map((agent) => (
-                       <AgentCard key={agent.name} agent={agent} />
+                       <AgentCard key={agent.firstName} agent={agent} />
                     ))}
                 </div>
             </div>

@@ -2,9 +2,10 @@
 import type React from 'react';
 
 export interface Agent {
-  name: string;
+  firstName: string;
   role: string;
-  icon: React.ElementType;
+  description: string;
+  avatar: string;
 }
 
 export interface Step {
