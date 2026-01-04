@@ -1,0 +1,287 @@
+/* ===========================================
+   Blog Styles - Digital Humans
+   =========================================== */
+
+/* Agent Colors CSS Variables */
+:root {
+  --agent-sophie: #8B5CF6;
+  --agent-olivia: #3B82F6;
+  --agent-marcus: #F97316;
+  --agent-diego: #EF4444;
+  --agent-zara: #22C55E;
+  --agent-raj: #EAB308;
+  --agent-elena: #6B7280;
+  --agent-jordan: #1E40AF;
+  --agent-aisha: #92400E;
+  --agent-lucas: #D946EF;
+}
+
+/* ===========================================
+   Expert Tip Box
+   =========================================== */
+.expert-tip {
+  border-left: 4px solid var(--agent-diego);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.03) 100%);
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+  border-radius: 0 12px 12px 0;
+  position: relative;
+}
+
+.expert-tip-header {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #374151;
+}
+
+.dark .expert-tip-header {
+  color: #E5E7EB;
+}
+
+.expert-tip p {
+  font-style: italic;
+  color: #4B5563;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.dark .expert-tip {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.05) 100%);
+}
+
+.dark .expert-tip p {
+  color: #D1D5DB;
+}
+
+/* Agent-specific colors for expert-tip */
+.expert-tip[data-agent="sophie-chen"] {
+  border-left-color: var(--agent-sophie);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="sophie-chen"] {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
+}
+
+.expert-tip[data-agent="olivia-parker"] {
+  border-left-color: var(--agent-olivia);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="olivia-parker"] {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+.expert-tip[data-agent="marcus-johnson"] {
+  border-left-color: var(--agent-marcus);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="marcus-johnson"] {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%);
+}
+
+.expert-tip[data-agent="diego-martinez"] {
+  border-left-color: var(--agent-diego);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="diego-martinez"] {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+}
+
+.expert-tip[data-agent="zara-thompson"] {
+  border-left-color: var(--agent-zara);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="zara-thompson"] {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%);
+}
+
+.expert-tip[data-agent="raj-patel"] {
+  border-left-color: var(--agent-raj);
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(234, 179, 8, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="raj-patel"] {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(234, 179, 8, 0.05) 100%);
+}
+
+.expert-tip[data-agent="elena-vasquez"] {
+  border-left-color: var(--agent-elena);
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.08) 0%, rgba(107, 114, 128, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="elena-vasquez"] {
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(107, 114, 128, 0.05) 100%);
+}
+
+.expert-tip[data-agent="jordan-blake"] {
+  border-left-color: var(--agent-jordan);
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.08) 0%, rgba(30, 64, 175, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="jordan-blake"] {
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.15) 0%, rgba(30, 64, 175, 0.05) 100%);
+}
+
+.expert-tip[data-agent="aisha-okonkwo"] {
+  border-left-color: var(--agent-aisha);
+  background: linear-gradient(135deg, rgba(146, 64, 14, 0.08) 0%, rgba(146, 64, 14, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="aisha-okonkwo"] {
+  background: linear-gradient(135deg, rgba(146, 64, 14, 0.15) 0%, rgba(146, 64, 14, 0.05) 100%);
+}
+
+.expert-tip[data-agent="lucas-fernandez"] {
+  border-left-color: var(--agent-lucas);
+  background: linear-gradient(135deg, rgba(217, 70, 239, 0.08) 0%, rgba(217, 70, 239, 0.03) 100%);
+}
+.dark .expert-tip[data-agent="lucas-fernandez"] {
+  background: linear-gradient(135deg, rgba(217, 70, 239, 0.15) 0%, rgba(217, 70, 239, 0.05) 100%);
+}
+
+/* ===========================================
+   Agent Signature Box
+   =========================================== */
+.agent-signature {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2.5rem 0 1rem 0;
+}
+
+.dark .agent-signature {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.05) 100%);
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.signature-header {
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+  color: #0891B2;
+}
+
+.dark .signature-header {
+  color: #22D3EE;
+}
+
+.agent-signature ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.agent-signature li {
+  color: #374151;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.dark .agent-signature li {
+  color: #D1D5DB;
+}
+
+.agent-signature li:last-child {
+  margin-bottom: 0;
+}
+
+/* ===========================================
+   Article Content Prose Styling
+   =========================================== */
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.dark .blog-content h2 {
+  color: #F9FAFB;
+}
+
+.blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: #1F2937;
+}
+
+.dark .blog-content h3 {
+  color: #F3F4F6;
+}
+
+.blog-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+  color: #374151;
+}
+
+.dark .blog-content p {
+  color: #D1D5DB;
+}
+
+.blog-content ul, .blog-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.dark .blog-content li {
+  color: #D1D5DB;
+}
+
+.blog-content pre {
+  background: #1F2937;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.blog-content code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9rem;
+  color: #E5E7EB;
+}
+
+.blog-content p code {
+  background: rgba(6, 182, 212, 0.1);
+  color: #0891B2;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.dark .blog-content p code {
+  background: rgba(6, 182, 212, 0.2);
+  color: #22D3EE;
+}
+
+.blog-content strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.dark .blog-content strong {
+  color: #F9FAFB;
+}
+
+.blog-content a {
+  color: #0891B2;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-content a:hover {
+  color: #0E7490;
+}
+
+.dark .blog-content a {
+  color: #22D3EE;
+}
+
+.dark .blog-content a:hover {
+  color: #67E8F9;
+}
