@@ -1,28 +1,79 @@
-import React from 'react';
-import { ArrowRightIcon } from './icons';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Hero: React.FC = () => {
     const { t } = useLanguage();
-    
+    const [visibleLines, setVisibleLines] = useState(0);
+
+    useEffect(() => {
+        const timers: NodeJS.Timeout[] = [];
+        const delays = [200, 400, 600, 800, 1400, 1800, 2400, 3200, 3800, 4400];
+        
+        delays.forEach((delay, index) => {
+            const timer = setTimeout(() => {
+                setVisibleLines(index + 1);
+            }, delay);
+            timers.push(timer);
+        });
+
+        return () => timers.forEach(timer => clearTimeout(timer));
+    }, []);
+
+    const lines = [
+        { key: 'hero.line1', isHighlight: false },
+        { key: 'hero.line2', isHighlight: false },
+        { key: 'hero.line3', isHighlight: false },
+        { key: 'hero.line4', isHighlight: false },
+        { key: 'spacer1', isSpacer: true },
+        { key: 'hero.line5', isHighlight: false },
+        { key: 'hero.line6', isHighlight: false, isBold: true },
+        { key: 'spacer2', isSpacer: true },
+        { key: 'hero.line7', isHighlight: true },
+    ];
+
     return (
-        <section className="relative pt-24 pb-32 text-center">
-            <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-slate-900 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
-                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-sky-400 opacity-20 blur-[100px]"></div>
+        <section className="min-h-screen flex flex-col justify-center items-center text-center px-4 py-12">
+            <div className="max-w-3xl mx-auto mb-12 space-y-5">
+                {lines.map((line, index) => {
+                    if (line.isSpacer) {
+                        return <div key={line.key} className={`h-8 ${index < visibleLines ? 'opacity-100' : 'opacity-0'}`}></div>;
+                    }
+                    
+                    const baseClasses = "transition-all duration-700 transform";
+                    const visibilityClasses = index < visibleLines 
+                        ? "opacity-100 translate-y-0" 
+                        : "opacity-0 translate-y-8";
+                    
+                    if (line.isHighlight) {
+                        return (
+                            <p key={line.key} className={`text-2xl md:text-3xl font-bold text-cyan-400 dark:text-cyan-400 mt-4 ${baseClasses} ${visibilityClasses}`}>
+                                {t(line.key)}
+                            </p>
+                        );
+                    }
+                    
+                    if (line.isBold) {
+                        return (
+                            <p key={line.key} className={`text-xl md:text-2xl text-slate-600 dark:text-slate-300 ${baseClasses} ${visibilityClasses}`}>
+                                <strong>{t(line.key)}</strong>
+                            </p>
+                        );
+                    }
+                    
+                    return (
+                        <p key={line.key} className={`text-lg md:text-xl text-slate-500 dark:text-slate-400 leading-relaxed ${baseClasses} ${visibilityClasses}`}>
+                            {t(line.key)}
+                        </p>
+                    );
+                })}
             </div>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-100 dark:to-slate-400">
-                    {t('hero.title')}
-                </h1>
-                <p className="mt-6 max-w-3xl mx-auto text-lg text-slate-600 dark:text-slate-400">
-                    {t('hero.subtitle')}
-                </p>
-                <div className="mt-10 flex justify-center gap-4">
-                    <a href="#cta" className="bg-sky-500 text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-sky-600 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-sky-500/20 flex items-center group">
-                        {t('hero.cta')} <ArrowRightIcon className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </a>
-                </div>
-            </div>
+            
+            <a 
+                href="#reality-check" 
+                className={`mt-8 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:-translate-y-1 transition-all duration-300 ${visibleLines >= 10 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            >
+                {t('hero.cta')}
+            </a>
         </section>
     );
 };
