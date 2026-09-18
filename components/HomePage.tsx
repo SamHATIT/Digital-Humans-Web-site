@@ -1,24 +1,32 @@
 import React from 'react';
-import Hero from './Hero';
-import RealityCheck from './RealityCheck';
-import HowItWorks from './HowItWorks';
-import OurAgents from './OurAgents';
-import Manifesto from './Manifesto';
-import CTA from './CTA';
-import FAQ from './FAQ';
+import Header from './site/Header';
+import Hero from './site/Hero';
+import Benefits from './site/Benefits';
+import HowItWorks from './site/HowItWorks';
+import OurWork from './site/OurWork';
+import Pricing from './site/Pricing';
+import CTA from './site/CTA';
+import Footer from './site/Footer';
+import SophieChat from './site/SophieChat';
 
-const HomePage: React.FC = () => {
-    return (
-        <>
-            <Hero />
-            <RealityCheck />
-            <HowItWorks />
-            <OurAgents />
-            <Manifesto />
-            <CTA />
-            <FAQ />
-        </>
-    );
-};
+// Ordre des sections repris du composant racine `Site` du bundle en ligne
+// (`_contenu-source/site_racine.js`) : Hero, Benefits, HowItWorks, OurWork,
+// Pricing, CTA. `OurAgents` existe dans les sources mais n'est pas monte par le
+// site en ligne — il n'est donc pas monte ici non plus (voir components/site/OurAgents.tsx).
+const HomePage: React.FC = () => (
+  <div data-screen-label="Marketing Home">
+    <Header/>
+    <main>
+      <Hero/>
+      <Benefits/>
+      <HowItWorks/>
+      <OurWork/>
+      <Pricing/>
+      <CTA/>
+    </main>
+    <Footer/>
+    <SophieChat/>
+  </div>
+);
 
 export default HomePage;

@@ -1,34 +1,26 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import HomePage from './components/HomePage';
+import LegalLayout from './components/legal/LegalLayout';
+import BlogLayout from './components/blog/BlogLayout';
 import BlogList from './components/blog/BlogList';
 import BlogArticle from './components/blog/BlogArticle';
 
-const App: React.FC = () => {
-    return (
-        <BrowserRouter>
-            <div className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-900">
-                {/* Background effects */}
-                <div className="fixed inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-                <div className="fixed -top-64 -left-32 w-[500px] h-[500px] bg-purple-500/10 dark:bg-purple-500/5 rounded-full blur-[150px] pointer-events-none"></div>
-                <div className="fixed -bottom-64 -right-32 w-[500px] h-[500px] bg-cyan-500/10 dark:bg-cyan-500/5 rounded-full blur-[150px] pointer-events-none"></div>
-                
-                <Header />
-                
-                <main className="relative z-10">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/blog" element={<BlogList />} />
-                        <Route path="/blog/:slug" element={<BlogArticle />} />
-                    </Routes>
-                </main>
-                
-                <Footer />
-            </div>
-        </BrowserRouter>
-    );
-};
+// Routes du site en ligne : `/`, `/legal`, `/cgv`, `/privacy`. Le bundle les
+// resolvait avec un mini-routeur sur `window.location.pathname`
+// (`_contenu-source/site_racine.js`) ; ici c'est react-router-dom, la plomberie
+// que le depot apporte.
+const App: React.FC = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<HomePage/>}/>
+      <Route path="/legal" element={<LegalLayout slug="legal"/>}/>
+      <Route path="/cgv" element={<LegalLayout slug="cgv"/>}/>
+      <Route path="/privacy" element={<LegalLayout slug="privacy"/>}/>
+      <Route path="/blog" element={<BlogLayout><BlogList/></BlogLayout>}/>
+      <Route path="/blog/:slug" element={<BlogLayout><BlogArticle/></BlogLayout>}/>
+    </Routes>
+  </BrowserRouter>
+);
 
 export default App;

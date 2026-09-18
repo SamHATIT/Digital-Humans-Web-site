@@ -1,6 +1,7 @@
 import React from 'react';
-import './styles/blog.css';
 import ReactDOM from 'react-dom/client';
+import './styles/site.css';
+import './styles/blog.css';
 import App from './App';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';

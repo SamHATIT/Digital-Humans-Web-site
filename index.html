@@ -1,47 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Digital Humans - AI-Powered Salesforce Automation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-      // Configure Tailwind CSS to use the 'selector' strategy for dark mode
-      // and to use the Poppins font.
-      tailwind.config = {
-        darkMode: 'selector',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
-            },
-          }
-        }
-      }
-    </script>
-    <script>
-        // Set theme on initial load to prevent FOUC (Flash of Unstyled Content)
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-<script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
-  }
-}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230a0a0b'/><text x='16' y='22' font-family='Georgia,serif' font-size='18' font-style='italic' fill='%23c8a97e' text-anchor='middle' font-weight='500'>DH</text></svg>">
+<meta name="description" content="Digital Humans — the autonomous Salesforce studio. Eleven AI agents draft your SDS, design your architecture and ship your code. From brief to delivered SDS in days, not months.">
+<meta name="keywords" content="Salesforce, AI, automated development, SDS, Apex, LWC, multi-agent, studio, consulting alternative">
+<meta name="author" content="Digital Humans">
+<meta name="theme-color" content="#0A0A0B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F5F2EC" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://digital-humans.fr/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://digital-humans.fr/">
+<meta property="og:title" content="Digital·Humans — Autonomous Salesforce Studio">
+<meta property="og:description" content="Eleven AI agents. From brief to delivered SDS in days, not months. The studio pattern, replacing the consultancy model.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:site_name" content="Digital·Humans">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://digital-humans.fr/">
+<meta name="twitter:title" content="Digital·Humans — Autonomous Salesforce Studio">
+<meta name="twitter:description" content="Eleven AI agents. From brief to delivered SDS in days, not months.">
+
+
+<title>Digital·Humans — Autonomous Salesforce Studio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script>
+  // Theme et langue poses avant le rendu pour eviter un flash.
+  // Memes cles que le site en ligne : dh-theme, dh-lang.
+  (function () {
+    try {
+      var th = localStorage.getItem('dh-theme');
+      document.documentElement.dataset.theme = (th === 'light' || th === 'dark') ? th : 'dark';
+      document.documentElement.classList.toggle('dark', document.documentElement.dataset.theme === 'dark');
+      var lg = localStorage.getItem('dh-lang');
+      if (lg === 'fr' || lg === 'en') document.documentElement.lang = lg;
+    } catch (e) {
+      document.documentElement.dataset.theme = 'dark';
+    }
+  })();
 </script>
 </head>
-<body class="font-sans antialiased bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+<body>
+<div id="root"></div>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
