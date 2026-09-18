@@ -39,6 +39,24 @@ Dans le hero, la boîte est **centrée**. Dans les sections, elle **flotte au-de
 
 **Mention IA obligatoire.** Au premier contact avec la boîte — hero comme sections — une ligne discrète mais lisible : « Vous échangez avec une IA. Elle peut se tromper. » Non masquable, pas une infobulle. C'est l'article 50 du règlement européen sur l'IA, en vigueur depuis le 2 août 2026.
 
+## A.1 bis — Règles de composition (ajoutées le 17/09, après le premier prototype)
+
+Le premier prototype a échoué sur la composition, pas sur les idées. Ces règles sont **impératives** et priment sur toute description de section ci-dessous. L'étalon n'est pas « inspiré de melius.com » : c'est **aussi dense et aussi composé que melius.com**.
+
+**1. Aucune photo en fond de page.** C'est l'erreur principale du premier jet, et elle vient d'une formule mal reprise du handoff d'origine — le brief la corrige ici. Melius ne met jamais d'image en fond plein écran. Une photo est **un panneau borné** : rectangle à coins arrondis, largeur et hauteur définies, ancré à gauche, occupant au plus 45 % de la largeur. Le reste de l'écran est la toile sombre de la marque. La boîte adaptative **chevauche le bord droit du panneau photo** — c'est ce débordement qui crée la profondeur.
+
+**2. Le texte ne se pose jamais sur une zone claire.** Photos sombres et contrastées, ou voile assombrissant obligatoire (`rgba(10,10,11,.55)` minimum). Aucun titre sur un visage, une joue, un ciel. Contraste vérifié, pas estimé.
+
+**3. La zone de droite est remplie.** Les nœuds se distribuent sur toute la surface du panneau, à des hauteurs différentes, reliés entre eux. Un grand rectangle sombre avec trois cartes tassées dans un angle et deux tiers de vide se lit comme un écran non terminé. Si le contenu ne suffit pas à remplir, réduire le panneau — jamais laisser le vide.
+
+**4. Connecteurs en courbes.** Courbes de Bézier fines dans la couleur d'accent (laiton), point plein au départ. **Jamais de pointillés droits ni de flèches d'organigramme** : c'est le vocabulaire d'un diagramme technique, pas d'une interface.
+
+**5. Les cartes-artefacts sont visuelles d'abord.** Chaque carte montre **une capture réelle** — fragment d'ERD, page de SDS en réduction, bloc de code coloré, tableau d'exigences rendu — surmontée d'une étiquette courte (nom + agent). **Pas de listes en chasse fixe minuscule** : à cette taille c'est illisible et ça fait maquette. L'artefact se montre, il ne se liste pas.
+
+**6. Le cadre existe.** Barre de navigation en haut sur toutes les vues, conteneur de 1240 px, marges latérales constantes, rythme vertical régulier entre sections. C'est ce qui fait « site » plutôt que « écran isolé ».
+
+**7. Hiérarchie typographique tenue.** Un seul titre par écran, un seul accent coloré par zone. Si tout est mis en avant, rien ne l'est.
+
 ## A.2 Structure de la page
 
 ### 0 · Intro plein écran
@@ -48,13 +66,13 @@ Cinq lignes, comme aujourd'hui. Trois changements : bouton **« Passer l'intro �
 Fond : carrousel d'**artefacts** en approche 3D dans les bandes latérales, jamais au centre. Chaque carte = un artefact réel avec son étiquette : « 25 exigences · Sophie », « ERD, 17 objets · Marcus », « Trigger + test · Diego », « 58 cas d'usage · Olivia », « Page de SDS · Emma ». Au centre : titre, sous-titre, **boîte Sophie centrée**, et les cinq boutons de cas d'usage. Sélectionner un cas remplace les artefacts du carrousel par ceux de ce cas.
 
 ### 2 · Pour qui (`#who`)
-Fond photo à gauche (photos de situation fournies), boîte flottante par-dessus. Onglets : DSI, Architecte Salesforce, Intégrateur / ESN, Direction métier, Achats. Zone droite : livrables du rôle. Suivi du bandeau défilant « Ce que l'équipe maîtrise ».
+**Panneau photo borné à gauche** (photos de situation fournies, voile assombrissant), boîte chevauchant son bord droit. Jamais de photo en fond de page — voir A.1 bis. Onglets : DSI, Architecte Salesforce, Intégrateur / ESN, Direction métier, Achats. Zone droite : livrables du rôle. Suivi du bandeau défilant « Ce que l'équipe maîtrise ».
 
 ### 3 · Méthode (`#process`)
 Onglets : Analyse IA, Validation client, Build automatisé, Déploiement. Zone droite : **artefacts de l'étape** reliés par les connecteurs, pas des portraits.
 
 ### 4 · L'Ensemble — les agents (`#agents`)
-Onglets : les onze prénoms. Fond : portrait de l'agent. Zone droite : ce que **cet agent produit**.
+Onglets : les onze prénoms. **Panneau borné** contenant le portrait de l'agent, recadré serré et assombri — pas un visage en fond d'écran. Zone droite : ce que **cet agent produit**.
 **Nouveauté demandée par Sam :** deux boîtes supplémentaires dans cette section, alimentées par l'agent sélectionné —
 - une boîte **« Ce qu'il écrit »** : extrait du Journal signé de cet agent (articles réels du blog) ;
 - une boîte **« Ce qu'il garantit »** : la clause du Pacte qui le concerne — quelle décision lui est interdite sans validation humaine.
@@ -63,7 +81,7 @@ C'est là que le Pacte et le Journal reprennent leur place, incarnés plutôt qu
 
 ### 5 · L'Atelier (`#atelier`) — **section renommée et repensée**
 Remplace « Industries » de la maquette. Onglets : les six projets publiés (LogiFleet, Clinical Trial Watch, Claim Resolver, Pipeline Tuner, Grid Foresight, Omnichannel Loop).
-Colonne gauche : **le brief client** sur illustration de fond, dans la boîte.
+Colonne gauche : **le brief client** dans la boîte, posée sur un panneau illustration borné.
 Zone droite : **variante unique du composant** — pas des cartes-nœuds mais un **aperçu du SDS qui défile lentement** (page réelle, en réduction), avec en dessous les chiffres du document (exigences, cas d'usage, objets, flux) et le lien **« Lire le SDS complet → »** vers la page publiée.
 
 ### 6 · Tarifs (`#pricing`)
