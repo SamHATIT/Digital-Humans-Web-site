@@ -10,6 +10,7 @@
     "test:runtime-reference": "npm install --prefix tests/.runtime --no-audit --no-fund --no-save react@18.3.1 react-dom@18.3.1 @babel/standalone@7",
     "test:parite": "node tests/construire-reference.mjs .reference && node tests/parite-contenu.mjs .reference dist",
     "test:routes": "node tests/routes-obligatoires.mjs dist",
+    "test:vitrines": "node tests/vitrines.mjs dist",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
