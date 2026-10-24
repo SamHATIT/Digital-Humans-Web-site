@@ -10,8 +10,11 @@
  *  T3  bandeau defilant present et boucle sans couture (piste dupliquee), pause au survol
  *  T4  prefers-reduced-motion coupe parallaxe et defilement (controle : sans reduce, actifs)
  *  T5  console vide FR/EN, clair/sombre, 1488 et 390 px (console, pageerror, requetes)
- *  T6  hors reference : tarifs, CTA studio -> app signup, demande de demo sans faux ticket,
- *      chiffres SDS mesures
+ *  T1b deux questions envoyees pendant une reponse lente : aucune n'est perdue (reprise 1)
+ *  T6  hors reference : CTA studio -> app signup, demande de demo sans faux ticket,
+ *      projet -> SDS ; chiffres RECALCULES depuis les SDS publiees et compares a
+ *      content/sds-chiffres.json (reprise 3) ; contenu commun de l'accueil (tarifs FR+EN,
+ *      puces, projets, agents) compare aux sources du bundle servi, _contenu-source/ (reprise 5)
  *
  * Aucun appel reseau reel vers le concierge : /api/public/concierge/* est intercepte.
  * Usage : CHROMIUM_PATH=… node tests/vitrines.mjs [dossier-candidat]
@@ -49,8 +52,8 @@ async function contexte(browser, { lang = 'fr', theme = 'dark', intro = 'vue', v
 }
 
 /** Visibilite stricte : dans la fenetre, opacite 1 sur toute la chaine, non recouvert. */
-const VISIBLE = `(texte) => {
-  const tous = [...document.querySelectorAll('body *')].filter(e => e.children.length === 0 && e.textContent.trim() === texte);
+const VISIBLE = `(texte, racine) => {
+  const tous = [...document.querySelectorAll((racine || 'body') + ' *')].filter(e => e.children.length === 0 && e.textContent.trim() === texte);
   const details = [];
   for (const e of tous) {
     const r = e.getBoundingClientRect();
@@ -124,6 +127,40 @@ async function t1(browser, origin) {
   await ctx.close();
 }
 
+// ---------------------------------------------------------------- T1b
+async function t1b(browser, origin) {
+  const ctx = await contexte(browser);
+  const page = await ctx.newPage();
+  const envois = [];
+  await page.route('**/api/public/concierge/history/**', r => r.fulfill({ status: 200, contentType: 'application/json', body: '[]' }));
+  await page.route('**/api/public/concierge/talk', async r => {
+    const corps = JSON.parse(r.request().postData() || '{}');
+    envois.push(corps.message);
+    await new Promise(f => setTimeout(f, 2000)); // reponse lente : la 2e question arrive pendant la 1re
+    await r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reply: 'Réponse à : ' + corps.message, next_action: null }) });
+  });
+  try {
+    await accueil(page, origin);
+    const who = page.locator('section#who');
+    await who.scrollIntoViewIfNeeded();
+    const champ = who.getByRole('textbox');
+    await champ.fill('Question A');
+    await champ.press('Enter');
+    for (let i = 0; i < 30 && envois.length < 1; i++) await page.waitForTimeout(100);
+    await page.locator('.sophie-drawer button[aria-label="Fermer"]').click().catch(() => {});
+    await champ.fill('Question B');
+    await champ.press('Enter');
+    const apresB = await champ.inputValue();
+    for (let i = 0; i < 80 && (envois.length < 2 || await page.getByText('Réponse à : Question B').count() === 0); i++) await page.waitForTimeout(100);
+    const users = await page.locator('.sophie-msg--user').allTextContents();
+    verifie(JSON.stringify(envois) === '["Question A","Question B"]', 'T1b les deux questions partent au concierge, dans l’ordre (aucune perdue)', JSON.stringify(envois));
+    verifie(JSON.stringify(users) === '["Question A","Question B"]', 'T1b les deux questions sont affichees dans le dialogue', JSON.stringify(users));
+    verifie(await page.getByText('Réponse à : Question A').count() === 1 && await page.getByText('Réponse à : Question B').count() === 1, 'T1b les deux reponses sont affichees');
+    verifie(apresB === '', 'T1b champ vide apres la 2e question (elle est prise en charge, pas jetee)', apresB);
+  } catch (e) { ko('T1b exception : ' + e.message.split('\n')[0]); }
+  await ctx.close();
+}
+
 // ---------------------------------------------------------------- T2
 async function t2(browser, origin) {
   for (const viewport of [DESKTOP, MOBILE]) {
@@ -162,16 +199,16 @@ async function t2(browser, origin) {
       if (!(await boite.count())) { ko(`T2 #${id} : pas de boite a onglets`); continue; }
       await boite.scrollIntoViewIfNeeded();
       await page.waitForTimeout(400);
-      const r = await page.evaluate(([id, t]) => {
-        const sec = document.getElementById(id);
-        const e = [...sec.querySelectorAll('*')].find(x => x.children.length === 0 && x.textContent.trim() === t);
-        if (!e) return { present: false };
-        e.scrollIntoView({ block: 'center' });
-        const b = e.getBoundingClientRect();
-        const h = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
-        return { present: true, recouvert: !(h === e || e.contains(h)) };
-      }, [id, MENTION.fr]);
-      verifie(r.present && !r.recouvert, `T2 #${id} : la boite porte la mention IA, non recouverte`, JSON.stringify(r));
+      // Meme predicat strict qu'a la premiere image (fenetre, opacite 1 sur toute la
+      // chaine, visibility, display, non recouverte), limite a la section (reprise 2).
+      const r = await page.evaluate(`new Promise(res => {
+        const sec = document.getElementById(${JSON.stringify(id)});
+        const e = [...sec.querySelectorAll('[data-mention-ia]')][0];
+        if (!e) return res({ visible: false, details: ['pas de [data-mention-ia] dans la section'] });
+        e.scrollIntoView({ block: 'center', behavior: 'instant' });
+        requestAnimationFrame(() => requestAnimationFrame(() => res((${VISIBLE})(${JSON.stringify(MENTION.fr)}, '#${id}'))));
+      })`);
+      verifie(r.visible, `T2 #${id} : la boite porte la mention IA, visible (stricte) une fois a l'ecran`, JSON.stringify(r));
     }
   } catch (e) { ko('T2 boites exception : ' + e.message.split('\n')[0]); }
   await ctx.close();
@@ -329,7 +366,7 @@ async function t6(browser, origin) {
     verifie(!(await dlg.innerText()).includes('Ticket créé') && envois.length === 0, 'T6 demo : aucun faux « Ticket créé », aucune requete envoyee', envois.join(','));
     await page.keyboard.press('Escape');
 
-    // chiffres de l'Atelier = SDS mesurees, et correspondance projet -> SDS
+    // correspondance projet -> SDS, et la page affiche les chiffres de content/sds-chiffres.json
     const atelier = page.locator('section#atelier');
     await atelier.scrollIntoViewIfNeeded();
     const attendu = { 'LogiFleet': 146, 'Clinical Trial Watch': 148, 'Claim Resolver': 179, 'Pipeline Tuner': 176, 'Grid Foresight': 177, 'Omnichannel Loop': 178 };
@@ -340,10 +377,93 @@ async function t6(browser, origin) {
       const txt = await atelier.innerText().catch(() => '');
       const c = CHIFFRES[String(id)];
       const chiffres = [c.exigences, c.cas_usage, c.objets, c.flux].every(v => new RegExp('(^|\\n)' + v + '\\n').test(txt));
-      verifie(href === `https://digital-humans.fr/sds-preview/${id}.html` && chiffres, `T6 Atelier ${nom} -> SDS ${id}, chiffres mesures`, `${href} ${JSON.stringify(c)}`);
+      verifie(href === `https://digital-humans.fr/sds-preview/${id}.html` && chiffres, `T6 Atelier ${nom} -> SDS ${id} ; la page affiche les chiffres de content/sds-chiffres.json`, `${href} ${JSON.stringify(c)}`);
     }
   } catch (e) { ko('T6 exception : ' + e.message.split('\n')[0]); }
   await ctx.close();
+}
+
+// ---------------------------------------------------------------- T6 bis : chiffres recalcules depuis les SDS publiees
+/** Recalcul independant (JS) des regles d'outils/chiffres-sds.py, sur le CORPS de la SDS servie. */
+function chiffresDepuisSds(html) {
+  let t = html.replace(/<(style|script)[^>]*>[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, '|').replace(/&mdash;|&#8212;/g, '—');
+  t = t.replace(/\s*\|[\s|]*/g, ' | ');
+  const dernier = (re, txt) => { const m = [...txt.matchAll(re)]; return m.length ? Number(m[m.length - 1][1]) : null; };
+  const i = t.indexOf('6.1 Data Model');
+  const corps = i >= 0 ? t.slice(i) : '';
+  return {
+    exigences: new Set(t.match(/\bBR-\d{3}\b/g) || []).size || null,
+    cas_usage: dernier(/Use Cases — (\d+) UCs/g, t),
+    objets: corps ? dernier(/6\.2 Custom Objects \| \((\d+)\)/g, corps) : null,
+    flux: corps ? dernier(/Automation Design \| Flows \((\d+)\)/g, corps) : null,
+  };
+}
+async function t6bis() {
+  for (const id of ['146', '148', '176', '177', '178', '179']) {
+    const url = `https://digital-humans.fr/sds-preview/${id}.html`;
+    let mesure = null, erreur = '';
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(20000) });
+      if (r.status !== 200) erreur = 'HTTP ' + r.status; else mesure = chiffresDepuisSds(await r.text());
+    } catch (e) { erreur = 'injoignable (' + (e.cause?.code || e.name) + ')'; }
+    if (!mesure) { ko(`T6 SDS ${id} : chiffres recalcules depuis la SDS publiee — ${erreur}`); continue; }
+    const json = CHIFFRES[id];
+    const manque = Object.entries(mesure).filter(([, v]) => v === null).map(([k]) => k);
+    verifie(!manque.length && JSON.stringify(mesure) === JSON.stringify(json),
+      `T6 SDS ${id} : chiffres recalcules depuis ${url} = content/sds-chiffres.json`,
+      manque.length ? 'introuvable : ' + manque.join(',') : `SDS ${JSON.stringify(mesure)} / JSON ${JSON.stringify(json)}`);
+  }
+}
+
+// ---------------------------------------------------------------- T6 ter : contenu commun = sources du bundle servi
+const SOURCE = ['app_contenu.js', 'benefits_howitworks.js'].map(f => fs.readFileSync(path.join(ROOT, '_contenu-source', f), 'utf-8')).join('\n');
+/** Vrai si `s` figure tel quel comme litteral '…' dans les sources du bundle (empreintes : outils/extraire-bundle.py). */
+const litteral = s => SOURCE.includes(`'${s}'`);
+/** Citation affichee = une ou plusieurs lignes du bundle jointes par une espace. */
+const citation = q => litteral(q) || [...q.matchAll(/ /g)].some(m => litteral(q.slice(0, m.index)) && citation(q.slice(m.index + 1)));
+async function t6ter(browser, origin) {
+  for (const lang of ['fr', 'en']) {
+    const ctx = await contexte(browser, { lang });
+    const page = await ctx.newPage();
+    try {
+      await accueil(page, origin);
+      // tarifs : chaque element affiche est un litteral du bundle ; 4 cartes, 15 puces
+      const t = await page.evaluate(() => {
+        const n = e => e.textContent.replace(/\s+/g, ' ').replace(/\s*→\s*$/, '').trim();
+        const sec = document.getElementById('pricing');
+        const cartes = [...sec.querySelectorAll('.v-offre')];
+        const elems = cartes.flatMap(c => [...c.querySelectorAll('.v-offre-acc, .v-prix-m, .v-prix-p, .v-prix-tva, .v-quota, li > span:last-child, .v-offre-note, .v-offre-cta')]).map(n).filter(Boolean);
+        return { cartes: cartes.length, puces: sec.querySelectorAll('li').length, elems };
+      });
+      const absents = t.elems.filter(e => !litteral(e));
+      verifie(t.cartes === 4 && t.puces === 15 && absents.length === 0, `T6 tarifs [${lang}] : 4 cartes, 15 puces, chaque texte affiche est un litteral du bundle servi`,
+        JSON.stringify({ cartes: t.cartes, puces: t.puces, absents }));
+      // projets : secteur et brief de chaque onglet
+      const at = page.locator('section#atelier');
+      await at.scrollIntoViewIfNeeded();
+      const absP = [];
+      for (let i = 0; i < 6; i++) {
+        await at.getByRole('tab').nth(i).click();
+        await page.waitForTimeout(450);
+        const v = await at.evaluate(s => [s.querySelector('.v-legende-role').textContent, s.querySelector('.v-legende-cit').textContent]);
+        v.filter(x => !litteral(x)).forEach(x => absP.push(x.slice(0, 60)));
+      }
+      verifie(absP.length === 0, `T6 Atelier [${lang}] : secteur et brief des 6 projets = textes du bundle servi`, JSON.stringify(absP));
+      // agents : role et citation de chaque onglet
+      const ag = page.locator('section#agents');
+      await ag.scrollIntoViewIfNeeded();
+      const absA = [];
+      for (let i = 0; i < 11; i++) {
+        await ag.getByRole('tab').nth(i).click();
+        await page.waitForTimeout(450);
+        const [role, cit] = await ag.evaluate(s => [s.querySelector('.v-legende-role').textContent, s.querySelector('.v-legende-cit').textContent]);
+        if (!litteral(role)) absA.push('role:' + role);
+        if (!citation(cit)) absA.push('citation:' + cit.slice(0, 60));
+      }
+      verifie(absA.length === 0, `T6 L’Ensemble [${lang}] : role et citation des 11 agents = textes du bundle servi`, JSON.stringify(absA));
+    } catch (e) { ko(`T6 contenu commun [${lang}] exception : ` + e.message.split('\n')[0]); }
+    await ctx.close();
+  }
 }
 
 const run = async () => {
@@ -351,7 +471,8 @@ const run = async () => {
   const srv = await serve(CAND);
   const origin = `http://127.0.0.1:${srv.port}`;
   const browser = await chromium.launch({ headless: true, executablePath: CHROME });
-  for (const t of [t1, t2, t3, t4, t5, t6]) await t(browser, origin);
+  for (const t of [t1, t1b, t2, t3, t4, t5, t6, t6ter]) await t(browser, origin);
+  await t6bis();
   await browser.close();
   srv.server.close();
   console.log('Vitrines — tests navigateur');
