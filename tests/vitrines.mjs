@@ -24,6 +24,19 @@ import { serve } from './serveur-statique.mjs';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { buildSync } from 'esbuild';
+
+// Reprise D2 (revue passe 2) : contenu ATTENDU par carte, par onglet et par
+// langue, lu dans les sources (content/*.ts) — et non « un litteral present
+// quelque part dans le bundle », qui laissait passer une puce FR sur la page EN
+// ou une puce Pro sur la carte Free.
+const RACINE_DEPOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ATTENDU = await (async () => {
+  const out = buildSync({ stdin: { contents: "export { PRICING_TIERS } from './content/pricing'; export { AGENTS, PROJETS } from './content/vitrines';",
+    resolveDir: RACINE_DEPOT, loader: 'ts' }, bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'error' });
+  return import('data:text/javascript;base64,' + Buffer.from(out.outputFiles[0].text).toString('base64'));
+})();
+const espaces = x => String(x).replace(/\s+/g, ' ').trim();
 
 const CHROME = process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium';
 const CAND = path.resolve(process.argv[2] || 'dist');
@@ -64,7 +77,23 @@ const VISIBLE = `(texte, racine) => {
     if (!opaque) { details.push('opacite/visibilite'); continue; }
     const h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     if (!(h === e || e.contains(h))) { details.push('recouvert par ' + (h ? h.tagName + '.' + h.className : 'rien')); continue; }
-    return { visible: true, n: tous.length };
+    // Reprise D3 (revue passe 2) : couleur et contraste. Seuil WCAG AA fixe
+    // AVANT mesure : 4,5:1 (3:1 si grand texte). Fond effectif = composition
+    // des fonds translucides des parents ; sans fond opaque, celui du body.
+    const rgba = c => { const m = c.match(/rgba?\\(([^)]+)\\)/); if (!m) return null; const v = m[1].split(/[ ,\\/]+/).filter(Boolean).map(Number); return [v[0], v[1], v[2], v.length > 3 ? v[3] : 1]; };
+    const csT = getComputedStyle(e), coul = rgba(csT.color);
+    if (!coul || coul[3] < 0.5) { details.push('couleur transparente ' + csT.color); continue; }
+    let fond = [0, 0, 0, 0]; let p = e;
+    const sur = (haut, bas) => { const a = haut[3] + bas[3] * (1 - haut[3]); if (!a) return [0, 0, 0, 0]; return [0, 1, 2].map(i => (haut[i] * haut[3] + bas[i] * bas[3] * (1 - haut[3])) / a).concat([a]); };
+    while (p && p.nodeType === 1 && fond[3] < 0.99) { const b = rgba(getComputedStyle(p).backgroundColor); if (b && b[3] > 0) fond = sur(fond, b); p = p.parentElement; }
+    if (fond[3] < 0.99) fond = sur(fond, rgba(getComputedStyle(document.body).backgroundColor) || [255, 255, 255, 1]);
+    const texte_c = sur(coul, fond);
+    const lum = c => { const [r, g, b] = c.slice(0, 3).map(x => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+    const L1 = lum(texte_c), L2 = lum(fond), ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+    const taille = parseFloat(csT.fontSize), gras = parseInt(csT.fontWeight) >= 700;
+    const seuil = (taille >= 24 || (gras && taille >= 18.66)) ? 3 : 4.5;
+    if (ratio < seuil) { details.push('contraste ' + ratio.toFixed(2) + ' < ' + seuil); continue; }
+    return { visible: true, n: tous.length, contraste: Math.round(ratio * 100) / 100 };
   }
   return { visible: false, n: tous.length, details };
 }`;
@@ -158,6 +187,42 @@ async function t1b(browser, origin) {
     verifie(await page.getByText('Réponse à : Question A').count() === 1 && await page.getByText('Réponse à : Question B').count() === 1, 'T1b les deux reponses sont affichees');
     verifie(apresB === '', 'T1b champ vide apres la 2e question (elle est prise en charge, pas jetee)', apresB);
   } catch (e) { ko('T1b exception : ' + e.message.split('\n')[0]); }
+  await ctx.close();
+}
+
+// ---------------------------------------------------------------- T1c
+// Reprise D1 (revue passe 2) : Q1 echoue (HTTP 500) pendant que Q2 et Q3 sont
+// en file. L'erreur doit suivre Q1, pas s'afficher a la fin apres REP<Q2>/REP<Q3>.
+async function t1c(browser, origin) {
+  const ctx = await contexte(browser);
+  const page = await ctx.newPage();
+  const envois = [];
+  await page.route('**/api/public/concierge/history/**', r => r.fulfill({ status: 200, contentType: 'application/json', body: '[]' }));
+  await page.route('**/api/public/concierge/talk', async r => {
+    const corps = JSON.parse(r.request().postData() || '{}');
+    envois.push(corps.message);
+    await new Promise(f => setTimeout(f, 1200));
+    if (corps.message === 'Q1') await r.fulfill({ status: 500, contentType: 'application/json', body: '{}' });
+    else await r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reply: 'REP<' + corps.message + '>', next_action: null }) });
+  });
+  try {
+    await accueil(page, origin);
+    const who = page.locator('section#who');
+    await who.scrollIntoViewIfNeeded();
+    const champ = who.getByRole('textbox');
+    await champ.fill('Q1'); await champ.press('Enter');
+    for (let i = 0; i < 30 && envois.length < 1; i++) await page.waitForTimeout(100);
+    const tiroir = page.locator('.sophie-drawer textarea');
+    for (const q of ['Q2', 'Q3']) { await tiroir.fill(q); await tiroir.press('Enter'); }
+    for (let i = 0; i < 100 && await page.getByText('REP<Q3>').count() === 0; i++) await page.waitForTimeout(100);
+    const bulles = await page.locator('.sophie-drawer-body .sophie-msg').evaluateAll(ns => ns.map(n =>
+      (n.querySelector('.sophie-msg-bubble--error') ? 'ERREUR' : n.textContent.trim())));
+    const iQ1 = bulles.indexOf('Q1');
+    verifie(JSON.stringify(envois) === '["Q1","Q2","Q3"]', 'T1c les trois questions partent, dans l’ordre', JSON.stringify(envois));
+    verifie(bulles.filter(b => b === 'ERREUR').length === 1, 'T1c une seule bulle d’erreur', JSON.stringify(bulles));
+    verifie(iQ1 >= 0 && bulles[iQ1 + 1] === 'ERREUR', 'T1c l’erreur suit la question qui a echoue (Q1)', JSON.stringify(bulles));
+    verifie(bulles.includes('REP<Q2>') && bulles.includes('REP<Q3>'), 'T1c les questions suivantes recoivent leur reponse', JSON.stringify(bulles));
+  } catch (e) { ko('T1c exception : ' + e.message.split('\n')[0]); }
   await ctx.close();
 }
 
@@ -436,6 +501,16 @@ async function t6ter(browser, origin) {
         return { cartes: cartes.length, puces: sec.querySelectorAll('li').length, elems };
       });
       const absents = t.elems.filter(e => !litteral(e));
+      const cartesD2 = await page.evaluate(() => [...document.querySelectorAll('#pricing .v-offre')].slice(0, 3).map(c => ({
+        nom: c.querySelector('h3').textContent, acc: c.querySelector('.v-offre-acc').textContent,
+        prix: c.querySelector('.v-prix-m').textContent, puces: [...c.querySelectorAll('li > span:last-child')].map(x => x.textContent) })));
+      const ecartsD2 = [];
+      ATTENDU.PRICING_TIERS.forEach((tier, i) => {
+        const c = cartesD2[i] || {};
+        const att = { nom: tier.name[lang], acc: tier.tagline[lang], prix: tier.price[lang], puces: tier.bullets[lang] };
+        for (const k of Object.keys(att)) if (JSON.stringify(Array.isArray(att[k]) ? att[k].map(espaces) : espaces(att[k])) !== JSON.stringify(Array.isArray(c[k]) ? c[k].map(espaces) : espaces(c[k] ?? ''))) ecartsD2.push(`${tier.id}.${k}`);
+      });
+      verifie(ecartsD2.length === 0, `T6 tarifs [${lang}] : chaque carte porte le nom, l’accroche, le prix et les puces de SON palier, dans SA langue`, JSON.stringify(ecartsD2));
       verifie(t.cartes === 4 && t.puces === 15 && absents.length === 0, `T6 tarifs [${lang}] : 4 cartes, 15 puces, chaque texte affiche est un litteral du bundle servi`,
         JSON.stringify({ cartes: t.cartes, puces: t.puces, absents }));
       // projets : secteur et brief de chaque onglet
@@ -447,6 +522,8 @@ async function t6ter(browser, origin) {
         await page.waitForTimeout(450);
         const v = await at.evaluate(s => [s.querySelector('.v-legende-role').textContent, s.querySelector('.v-legende-cit').textContent]);
         v.filter(x => !litteral(x)).forEach(x => absP.push(x.slice(0, 60)));
+        const pr = ATTENDU.PROJETS[i];
+        if (espaces(v[0]) !== espaces(pr.sector[lang]) || espaces(v[1]) !== espaces(pr.brief[lang])) absP.push(`D2 onglet ${i} (${pr.name}) : secteur/brief d’un autre projet ou d’une autre langue`);
       }
       verifie(absP.length === 0, `T6 Atelier [${lang}] : secteur et brief des 6 projets = textes du bundle servi`, JSON.stringify(absP));
       // agents : role et citation de chaque onglet
@@ -459,6 +536,9 @@ async function t6ter(browser, origin) {
         const [role, cit] = await ag.evaluate(s => [s.querySelector('.v-legende-role').textContent, s.querySelector('.v-legende-cit').textContent]);
         if (!litteral(role)) absA.push('role:' + role);
         if (!citation(cit)) absA.push('citation:' + cit.slice(0, 60));
+        const agt = ATTENDU.AGENTS[i];
+        if (espaces(role) !== espaces(agt.role[lang])) absA.push(`D2 role ${agt.first} : attendu ${agt.role[lang]}`);
+        if (espaces(cit) !== espaces(agt.quote[lang])) absA.push(`D2 citation ${agt.first} : pas celle de l’agent dans cette langue`);
       }
       verifie(absA.length === 0, `T6 L’Ensemble [${lang}] : role et citation des 11 agents = textes du bundle servi`, JSON.stringify(absA));
     } catch (e) { ko(`T6 contenu commun [${lang}] exception : ` + e.message.split('\n')[0]); }
@@ -471,7 +551,7 @@ const run = async () => {
   const srv = await serve(CAND);
   const origin = `http://127.0.0.1:${srv.port}`;
   const browser = await chromium.launch({ headless: true, executablePath: CHROME });
-  for (const t of [t1, t1b, t2, t3, t4, t5, t6, t6ter]) await t(browser, origin);
+  for (const t of [t1, t1b, t1c, t2, t3, t4, t5, t6, t6ter]) await t(browser, origin);
   await t6bis();
   await browser.close();
   srv.server.close();
