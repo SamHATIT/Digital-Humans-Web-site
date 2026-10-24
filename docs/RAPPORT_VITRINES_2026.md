@@ -293,6 +293,19 @@ est lu, non exécuté sur un vrai 404.
 
 Après reprises (`impl-site-r1-final.log`) : `TYPECHECK=0`, `BUILD=0`, `test:parite` OK (`/legal` 59, `/cgv` 70, `/privacy` 67 lignes, FR et EN), `test:routes` OK (six SDS 200), `test:vitrines` **`OK : 89 controles.`** (73 avant les reprises).
 
+## Reprises après revue 2 (`docs/REVUE_VITRINES_2026_PASSE2.md`) — faites par Claude le 24/10, hors orchestration
+
+| Défaut | Commit | Rouge prouvé | Vert |
+|---|---|---|---|
+| D1. Erreur de Q1 affichée en fin de liste | test T1c `8b618e1`, correctif `5e81d4c` | code d'avant : `ECHEC T1c une seule bulle d'erreur` et `ECHEC T1c l'erreur suit la question qui a echoue` — bulles `Q1, Q2, REP<Q2>, Q3, REP<Q3>` : **l'erreur avait disparu**, effacée par l'envoi suivant (`setError(null)`), pire que le constat de la revue | `OK T1c` ×4 |
+| D2. T6 ter ne discriminait ni la langue ni la carte | `8b618e1` | mutant m1 (puces FR sur la page EN) : `ECHEC T6 tarifs [en] … ["free.puces","pro.puces","team.puces"]` — vert avant ; mutant m2 (puces Pro sur la carte Free) : `ECHEC … ["free.puces"]` | `OK T6 tarifs [fr]/[en] : chaque carte porte … SON palier, dans SA langue` |
+| D3. VISIBLE sans couleur ni contraste | `8b618e1` | mutant m3 (`.v-mention{color:transparent}`) : `ECHEC T2` ×8, `"couleur transparente rgba(0, 0, 0, 0)"` — `OK : 89 controles` avant | code réel conforme au seuil WCAG AA fixé avant la mesure |
+| D4. LogiFleet : « 12 custom objects · 47 flows · 9 LWC » dans le bandeau, contre 17 objets / 27 flux mesurés dans l'onglet | — | — | **ouvert, décision de Sam** : aligner sur la SDS, retirer la ligne, ou la garder en le disant |
+
+Après reprises : `TYPECHECK=0`, `test:routes` OK, `test:vitrines` **`OK : 95 controles.`** Les mutants sont rejoués dans des copies (`/root/.dh_orch_vague2/site-mut/`), jamais dans ce worktree.
+
+Limite toujours non couverte (revue 2) : le volet « boîtes » de T2 ne tourne qu'en FR à 1488 px.
+
 ## 6 · Écarts aux règles, dits platement
 
 - La mesure « avant » a écrit `/tmp/dh-reference` (chemin codé dans `package.json` d'origine) avant
