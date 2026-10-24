@@ -4,7 +4,9 @@
  *  1. /legal, /cgv, /privacy repondent et rendent leur document, en FR et EN,
  *     avec les clauses IA (reglement UE 2024/1689, art. 50), le SIRET et la
  *     mention « TVA en cours d'attribution ».
- *  2. Les six liens SDS de l'Atelier sont presents sur la page d'accueil.
+ *  2. Les six liens SDS de l'Atelier sont presents sur la page d'accueil : dans
+ *     le DOM (ancien accueil) ou, accueil a onglets, en parcourant les onglets
+ *     de #atelier (un seul lien « Lire le SDS complet » visible a la fois).
  *
  *  3. Les six liens SDS se resolvent : requete HTTP reelle, statut 200 exige.
  *     Un reseau injoignable fait echouer le controle (pas de repli).
@@ -63,10 +65,17 @@ async function pageText(browser, origin, route, lang) {
     try { localStorage.setItem('dh-lang', l); localStorage.setItem('dh-theme', 'dark'); } catch (e) {}
   }, [lang]);
   const res = await page.goto(origin + route, { waitUntil: 'load' });
-  await page.waitForSelector('header.glass, .legal-doc', { timeout: 30000 });
+  await page.waitForSelector('header.glass, .legal-doc, [data-page="accueil"]', { timeout: 30000 });
   const status = res ? res.status() : 0;
   const text = await page.evaluate(() => document.body.innerText);
-  const html = await page.content();
+  let html = await page.content();
+  // Accueil a onglets : chaque onglet de l'Atelier affiche son propre lien.
+  const onglets = page.locator('#atelier [role="tab"]');
+  for (let i = 0; i < await onglets.count(); i++) {
+    await onglets.nth(i).click();
+    await page.waitForTimeout(400);
+    html += await page.content();
+  }
   await ctx.close();
   return { status, text, html };
 }
