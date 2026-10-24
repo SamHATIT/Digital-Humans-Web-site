@@ -12,8 +12,11 @@ import { AV } from '../../content/avatars';
 // conversation apres un rechargement.
 //
 // C'est la base de la boite adaptative du brief (partie A.1) : a faire
-// evoluer, pas a reecrire. Aucune evolution ici — ce lot ne porte que le
-// contenu (B.1.2).
+// evoluer, pas a reecrire. Evolution (vitrines, 2026) : le tiroir ecoute
+// l'evenement `dh:sophie` emis par la ligne Sophie des boites adaptatives
+// (components/vitrine/BoiteSophie.tsx) — il s'ouvre et envoie la question
+// recue ; `lanceur={false}` masque le bouton flottant (accueil). Sans prop,
+// le rendu est inchange (pages legales).
 // ══════════════════════════════════════════════════════════════════
 
 const API_TALK = '/api/public/concierge/talk';
@@ -35,7 +38,7 @@ function getSessionUuid() {
   return id;
 }
 
-const SophieChat: React.FC = () => {
+const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
     const { language: lang } = useLanguage();
 
     const [open, setOpen] = useState(false);
@@ -45,6 +48,7 @@ const SophieChat: React.FC = () => {
     const [sending, setSending] = useState(false);
     const [error, setError] = useState(null);
     const sessionUuid = useRef(null);
+    const historique = useRef(false);
     const scrollRef = useRef(null);
 
     const t = lang === 'en' ? {
@@ -78,23 +82,39 @@ const SophieChat: React.FC = () => {
     // Initialize session UUID + load history when widget opens for the first time.
     useEffect(() => {
       if (!open) return;
-      if (!sessionUuid.current) {
-        sessionUuid.current = getSessionUuid();
+      if (!historique.current) {
+        historique.current = true;
+        if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
         // Fetch any existing history (silent fail if endpoint hiccups)
         fetch(API_HISTORY(sessionUuid.current))
           .then(r => r.ok ? r.json() : [])
           .then(turns => {
+            // `prev` : une question envoyee par une boite adaptative pendant le
+            // chargement de l'historique reste a la suite.
             if (Array.isArray(turns) && turns.length > 0) {
-              setMessages(turns.map(t => ({role: t.role, content: t.message})));
+              setMessages(prev => turns.map(t => ({role: t.role, content: t.message})).concat(prev));
             } else {
-              setMessages([{role: 'assistant', content: t.welcome}]);
+              setMessages(prev => [{role: 'assistant', content: t.welcome}].concat(prev));
             }
           })
           .catch(() => {
-            setMessages([{role: 'assistant', content: t.welcome}]);
+            setMessages(prev => [{role: 'assistant', content: t.welcome}].concat(prev));
           });
       }
     }, [open]);
+
+    // Question envoyee par une boite adaptative : ouvrir, puis envoyer si non vide.
+    const envoyerRef = useRef(sendMessage);
+    envoyerRef.current = sendMessage;
+    useEffect(() => {
+      const recevoir = (e: Event) => {
+        const texte = ((e as CustomEvent).detail?.texte || '').trim();
+        setOpen(true);
+        if (texte) envoyerRef.current(texte);
+      };
+      window.addEventListener('dh:sophie', recevoir);
+      return () => window.removeEventListener('dh:sophie', recevoir);
+    }, []);
 
     // Auto-scroll to bottom on new message.
     useEffect(() => {
@@ -103,12 +123,13 @@ const SophieChat: React.FC = () => {
       }
     }, [messages, sending]);
 
-    async function sendMessage() {
-      const text = input.trim();
+    async function sendMessage(direct?: string) {
+      const text = (direct !== undefined ? direct : input).trim();
       if (!text || sending) return;
+      if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
       setError(null);
       setMessages(prev => [...prev, {role: 'user', content: text}]);
-      setInput('');
+      if (direct === undefined) setInput('');
       setSending(true);
       try {
         const res = await fetch(API_TALK, {
@@ -140,7 +161,7 @@ const SophieChat: React.FC = () => {
     return (
       <>
         {/* Floating launcher button — bottom-right, hidden when drawer open */}
-        {!open && (
+        {lanceur && !open && (
           <button
             className="sophie-launcher"
             onClick={() => setOpen(true)}
@@ -200,7 +221,7 @@ const SophieChat: React.FC = () => {
                 rows={1}
                 disabled={sending}
               />
-              <button onClick={sendMessage} disabled={!input.trim() || sending} className="sophie-send-btn">
+              <button onClick={() => sendMessage()} disabled={!input.trim() || sending} className="sophie-send-btn">
                 {t.send} →
               </button>
             </div>
