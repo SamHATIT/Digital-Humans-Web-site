@@ -69,11 +69,20 @@ $ diff _contenu-source/legal_data.js <re-extraction>
 | `test:parite` | OK sur 8 routes, **contre une référence périmée** | OK sur `/legal`, `/cgv`, `/privacy` FR+EN contre la référence re-extraite (59/70/67 lignes) |
 | `test:routes` | OK, 6 liens **présents** (non résolus) | OK : 6 routes légales, ligne du 30/09, 6 liens présents **et résolus en HTTP 200** |
 
-Changements des tests, dits : `test:parite` ne compare plus `/` (l'accueil change par mission ; le
-contenu commun est contrôlé par `test:vitrines` T6) et écrit sa référence dans `.reference/` (ignoré)
+Changements des tests, dits : `test:parite` ne compare plus `/` (l'accueil change par mission) et écrit sa référence dans `.reference/` (ignoré)
 au lieu de `/tmp/dh-reference` ; `test:routes` lit les liens SDS onglet par onglet et fait une vraie
 requête (contrôle négatif : `sds-preview/999.html -> 404`). Sur le build parent, `test:routes` adapté
 trouve toujours les six liens (neutre pour l'ancien accueil). Journal final : `impl-site-final.log`.
+
+**Correction après revue 1 (reprise 5).** J'avais écrit ici, et dans le message du commit `a550e95`,
+que « le contenu commun de l'accueil est contrôlé par `test:vitrines` T6 ». C'était trop large : à
+`2ebfabd`, T6 ne vérifiait que cinq chaînes de tarifs **en FR**, et les chiffres contre le JSON, pas
+contre les SDS. Le message de commit n'est pas réécrit (pas de réécriture d'historique) ; la
+couverture réelle est désormais celle de la section « Reprises après revue 1 » : tarifs FR et EN
+(4 cartes, 15 puces, chaque texte = littéral des sources du bundle servi), secteur et brief des
+6 projets, rôle et citation des 11 agents, chiffres recalculés depuis les six SDS publiées. Ce qui
+reste hors contrôle automatique : les textes repris de la référence (rôles, étapes, FAQ, héros), qui
+n'existent pas sur le site en ligne.
 
 ### 1.4 Nouveaux tests (`npm run test:vitrines`, `tests/vitrines.mjs`) — rouges d'abord
 
@@ -237,6 +246,12 @@ ne se retrouvent pas ici : 2,14 Mo mesurés pour le portage, dont 1,6 Mo de port
 
 ## 5 · Attend une décision de Sam
 
+0. **Mention IA à 390 px, intro déjà vue (signalé par la revue)** : à la première image, la mention
+   du héros est **sous la ligne de flottaison** — haut à 880 px pour une fenêtre de 844 px (914 px
+   dans la référence). Le critère de la mission est « visible au premier rendu » ; T2 se replie alors
+   sur « au premier contact avec la boîte » (brief A.1). Elle est visible dès la première image à
+   1488 px, et à 390 px quand l'intro joue (mention dans l'intro). Option : remonter la boîte du héros
+   sur mobile (écart à la référence). Décision à prendre.
 1. **Adresse de routage Email-to-Case** : fournie nulle part (dépôt, docs). La modale « Demander une
    démo » affiche un TODO visible, l'envoi est désactivé ; ni mailto, ni faux numéro de ticket (la
    référence affichait « Email-to-Case · DH-2026-0418 » sans rien envoyer).
@@ -253,6 +268,30 @@ ne se retrouvent pas ici : 2,14 Mo mesurés pour le portage, dont 1,6 Mo de port
    survol, contraste du bandeau en clair, mention IA de l'intro visible dès la première image (2,9 s dans
    la référence), flèche de la boîte qui parle à Sophie (la référence ouvrait la modale démo).
 7. **Test B.3.4 contre l'API réelle** : autorisation et compte de test à prévoir.
+8. **Relevés par la revue, à trancher** : règle « le site en ligne fait foi sur le contenu » (briefs,
+   rôles, citations, tarifs) face à « reproduire, ne pas réinterpréter » ; titre d'article du Journal
+   en français sur la page anglaise (le Journal n'existe qu'en français) ; prompts tronqués dans les
+   champs d'une ligne (fidèle à la référence dans les vitrines, nouveau dans le héros à 390 px, où la
+   référence montrait le prompt entier sur plusieurs lignes).
+
+## Reprises après revue 1 (`docs/REVUE_VITRINES_2026.md`, commit `f974e72`)
+
+| Reprise | Commit | Rouge prouvé | Vert |
+|---|---|---|---|
+| 1. Question envoyée pendant une réponse : avalée (`if (!text \|\| sending) return;`) | test `3e28b50`, correctif `d35496e` | code d'avant : `ECHEC T1b … — ["Question A"]` ×3 (`impl-site-r1-rouge.log`) | `OK T1b` ×4 (`impl-site-r1-final.log`) |
+| 2. T2 boîtes vert avec mention à `opacity:0` | `3e28b50` | mutant M5 : `ECHEC T2 #who/#process/#agents/#atelier … "opacite/visibilite"` (`impl-site-mutants.log`) | `OK T2 #… visible (stricte)` ×4 |
+| 3. T6 chiffres comparés au JSON seulement | `3e28b50` | mutant M6 bis (JSON 146 flux 27→28) : `ECHEC T6 SDS 146 … SDS {…"flux":27} / JSON {…"flux":28}` ; le contrôle de page, renommé, reste vert, comme il se doit | `OK T6 SDS 146…179` ×6 |
+| 4. 390 px, mention sous la ligne de flottaison, absente du § 5 | ce commit | — | § 5, point 0 |
+| 5. Couverture du contenu commun surestimée | `3e28b50` + § 1.3 | mutant M8 (tarif, rôle de Sophie, secteur de LogiFleet altérés dans le JS construit) : `ECHEC T6 tarifs [fr] … ["Modèle Nemotron, hébergé aux États-Unis"]`, `ECHEC T6 Atelier [fr] … ["Transport & logistique"]`, `ECHEC T6 L'Ensemble [fr] … ["role:Cheffe de projet · pilote"]` | `OK T6 tarifs/Atelier/L'Ensemble [fr]` et `[en]` |
+
+Correctif de la reprise 1 (`components/site/SophieChat.tsx`) : une question reçue pendant qu'une
+réponse est attendue est affichée tout de suite et mise en file, puis envoyée après la réponse en
+cours ; l'état « en cours » est tenu par une ref (l'appel vient d'un écouteur d'événement dont la
+fermeture voyait un `sending` périmé). Le champ de la boîte est vidé parce que la question est prise
+en charge, pas jetée. Le chemin « SDS introuvable » de T6 bis (valeur `null` ou HTTP ≠ 200 → échec)
+est lu, non exécuté sur un vrai 404.
+
+Après reprises (`impl-site-r1-final.log`) : `TYPECHECK=0`, `BUILD=0`, `test:parite` OK (`/legal` 59, `/cgv` 70, `/privacy` 67 lignes, FR et EN), `test:routes` OK (six SDS 200), `test:vitrines` **`OK : 89 controles.`** (73 avant les reprises).
 
 ## 6 · Écarts aux règles, dits platement
 
@@ -267,6 +306,10 @@ ne se retrouvent pas ici : 2,14 Mo mesurés pour le portage, dont 1,6 Mo de port
 ## 7 · Commits (`git log --oneline origin/refonte-2026..HEAD`)
 
 ```
+d35496e correctif(sophie): ne plus jeter une question envoyee pendant une reponse (reprise 1)
+3e28b50 test(vitrines): reprises 1, 2, 3 et 5 de la revue — question perdue, T2 strict, chiffres recalcules, contenu commun
+f974e72 docs(revue): revue independante des vitrines — verdict « a reprendre »
+2ebfabd docs(rapport): rapport des composants vitrines (fait/preuve, infirme, ouvert, attend Sam)
 953f0b2 vitrines: accueil refondu d'apres la reference du 18/09 (quatre vitrines, heros, tarifs, FAQ, CTA)
 a550e95 test(parite, routes): restreindre la parite aux routes legales, lire les liens SDS onglet par onglet
 873fedc contenu(vitrines): decouper la reference du 18/09 et corriger son contenu par les sources
@@ -276,7 +319,7 @@ a1c5fe8 test(vitrines): tests navigateur des vitrines, rouges sur 4f51145
 0b13bdf test(parite): re-extraire la reference legale du bundle servi (30/09)
 ```
 
-Plus le commit qui ajoute ce rapport (`docs(rapport): …`), dernier de la branche.
+Plus le commit qui met à jour ce rapport (`docs(rapport): reprises après revue 1`), dernier de la branche. `f974e72` est la revue du testeur, conservée telle quelle.
 
 ## 8 · Rejouer
 
