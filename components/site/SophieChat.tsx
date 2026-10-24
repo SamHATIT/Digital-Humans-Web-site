@@ -12,8 +12,11 @@ import { AV } from '../../content/avatars';
 // conversation apres un rechargement.
 //
 // C'est la base de la boite adaptative du brief (partie A.1) : a faire
-// evoluer, pas a reecrire. Aucune evolution ici — ce lot ne porte que le
-// contenu (B.1.2).
+// evoluer, pas a reecrire. Evolution (vitrines, 2026) : le tiroir ecoute
+// l'evenement `dh:sophie` emis par la ligne Sophie des boites adaptatives
+// (components/vitrine/BoiteSophie.tsx) — il s'ouvre et envoie la question
+// recue ; `lanceur={false}` masque le bouton flottant (accueil). Sans prop,
+// le rendu est inchange (pages legales).
 // ══════════════════════════════════════════════════════════════════
 
 const API_TALK = '/api/public/concierge/talk';
@@ -35,7 +38,7 @@ function getSessionUuid() {
   return id;
 }
 
-const SophieChat: React.FC = () => {
+const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
     const { language: lang } = useLanguage();
 
     const [open, setOpen] = useState(false);
@@ -43,8 +46,10 @@ const SophieChat: React.FC = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [sending, setSending] = useState(false);
-    const [error, setError] = useState(null);
+    // Reprise D1 (revue passe 2) : plus d'etat d'erreur global rendu en fin de
+    // liste ; l'erreur est une bulle inseree juste apres la question en echec.
     const sessionUuid = useRef(null);
+    const historique = useRef(false);
     const scrollRef = useRef(null);
 
     const t = lang === 'en' ? {
@@ -78,23 +83,39 @@ const SophieChat: React.FC = () => {
     // Initialize session UUID + load history when widget opens for the first time.
     useEffect(() => {
       if (!open) return;
-      if (!sessionUuid.current) {
-        sessionUuid.current = getSessionUuid();
+      if (!historique.current) {
+        historique.current = true;
+        if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
         // Fetch any existing history (silent fail if endpoint hiccups)
         fetch(API_HISTORY(sessionUuid.current))
           .then(r => r.ok ? r.json() : [])
           .then(turns => {
+            // `prev` : une question envoyee par une boite adaptative pendant le
+            // chargement de l'historique reste a la suite.
             if (Array.isArray(turns) && turns.length > 0) {
-              setMessages(turns.map(t => ({role: t.role, content: t.message})));
+              setMessages(prev => turns.map(t => ({role: t.role, content: t.message})).concat(prev));
             } else {
-              setMessages([{role: 'assistant', content: t.welcome}]);
+              setMessages(prev => [{role: 'assistant', content: t.welcome}].concat(prev));
             }
           })
           .catch(() => {
-            setMessages([{role: 'assistant', content: t.welcome}]);
+            setMessages(prev => [{role: 'assistant', content: t.welcome}].concat(prev));
           });
       }
     }, [open]);
+
+    // Question envoyee par une boite adaptative : ouvrir, puis envoyer si non vide.
+    const envoyerRef = useRef(sendMessage);
+    envoyerRef.current = sendMessage;
+    useEffect(() => {
+      const recevoir = (e: Event) => {
+        const texte = ((e as CustomEvent).detail?.texte || '').trim();
+        setOpen(true);
+        if (texte) envoyerRef.current(texte);
+      };
+      window.addEventListener('dh:sophie', recevoir);
+      return () => window.removeEventListener('dh:sophie', recevoir);
+    }, []);
 
     // Auto-scroll to bottom on new message.
     useEffect(() => {
@@ -103,12 +124,17 @@ const SophieChat: React.FC = () => {
       }
     }, [messages, sending]);
 
-    async function sendMessage() {
-      const text = input.trim();
-      if (!text || sending) return;
-      setError(null);
-      setMessages(prev => [...prev, {role: 'user', content: text}]);
-      setInput('');
+    // Une question recue pendant qu'une reponse est attendue n'est jamais jetee :
+    // elle est affichee tout de suite et mise en file, puis envoyee apres la
+    // reponse en cours (avant : `if (sending) return;` l'avalait en silence —
+    // revue independante du 24/10, reprise 1). Refs, pas d'etat : l'appel peut
+    // venir d'un ecouteur d'evenement dont la fermeture voit un `sending` perime.
+    const enCours = useRef(false);
+    const file = useRef<{ text: string; id: number }[]>([]);
+    const prochainId = useRef(0);
+
+    async function transmettre(text: string, id: number) {
+      enCours.current = true;
       setSending(true);
       try {
         const res = await fetch(API_TALK, {
@@ -124,10 +150,27 @@ const SophieChat: React.FC = () => {
         const data = await res.json();
         setMessages(prev => [...prev, {role: 'assistant', content: data.reply, next_action: data.next_action}]);
       } catch (e) {
-        setError(t.error);
+        setMessages(prev => {
+          const i = prev.findIndex(m => m.id === id);
+          const bulle = {role: 'assistant', content: t.error, error: true};
+          return i < 0 ? [...prev, bulle] : [...prev.slice(0, i + 1), bulle, ...prev.slice(i + 1)];
+        });
       } finally {
-        setSending(false);
+        const suivante = file.current.shift();
+        if (suivante !== undefined) transmettre(suivante.text, suivante.id);
+        else { enCours.current = false; setSending(false); }
       }
+    }
+
+    function sendMessage(direct?: string) {
+      const text = (direct !== undefined ? direct : input).trim();
+      if (!text) return;
+      if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
+      const id = ++prochainId.current;
+      setMessages(prev => [...prev, {role: 'user', content: text, id}]);
+      if (direct === undefined) setInput('');
+      if (enCours.current) { file.current.push({ text, id }); return; }
+      transmettre(text, id);
     }
 
     function handleKey(e) {
@@ -140,7 +183,7 @@ const SophieChat: React.FC = () => {
     return (
       <>
         {/* Floating launcher button — bottom-right, hidden when drawer open */}
-        {!open && (
+        {lanceur && !open && (
           <button
             className="sophie-launcher"
             onClick={() => setOpen(true)}
@@ -174,17 +217,12 @@ const SophieChat: React.FC = () => {
             <div ref={scrollRef} className="sophie-drawer-body">
               {messages.map((m, i) => (
                 <div key={i} className={`sophie-msg sophie-msg--${m.role}`}>
-                  <div className="sophie-msg-bubble">{m.content}</div>
+                  <div className={m.error ? 'sophie-msg-bubble sophie-msg-bubble--error' : 'sophie-msg-bubble'}>{m.content}</div>
                 </div>
               ))}
               {sending && (
                 <div className="sophie-msg sophie-msg--assistant">
                   <div className="sophie-msg-bubble sophie-msg-bubble--thinking">{t.thinking}</div>
-                </div>
-              )}
-              {error && (
-                <div className="sophie-msg sophie-msg--assistant">
-                  <div className="sophie-msg-bubble sophie-msg-bubble--error">{error}</div>
                 </div>
               )}
             </div>
@@ -200,7 +238,7 @@ const SophieChat: React.FC = () => {
                 rows={1}
                 disabled={sending}
               />
-              <button onClick={sendMessage} disabled={!input.trim() || sending} className="sophie-send-btn">
+              <button onClick={() => sendMessage()} disabled={!input.trim() || sending} className="sophie-send-btn">
                 {t.send} →
               </button>
             </div>

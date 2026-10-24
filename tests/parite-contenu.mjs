@@ -25,7 +25,13 @@ const CHROME = process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium';
 const REF = path.resolve(process.argv[2] || '/tmp/claude-0/ref/site');
 const CAND = path.resolve(process.argv[3] || 'dist');
 
-const ROUTES = ['/', '/legal', '/cgv', '/privacy'];
+// L'accueil est refondu (vitrines, 2026) : son texte suit desormais la reference
+// validee le 18/09, il ne peut plus etre identique au site en ligne. La parite
+// reste exigee pour les routes legales, qui ne changent pas
+// (docs/MISSION_VITRINES_2026.md). Le contenu commun de l'accueil (tarifs,
+// liens SDS, chiffres) est controle par tests/vitrines.mjs et
+// tests/routes-obligatoires.mjs.
+const ROUTES = ['/legal', '/cgv', '/privacy'];
 const LANGS = ['fr', 'en'];
 
 /** Texte visible, normalise : une ligne par ligne rendue, espaces resserres. */

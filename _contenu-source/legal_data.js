@@ -305,6 +305,7 @@ const LEGAL_DATA = {
             "<strong>Compte actif</strong> : pour la durée de l'abonnement, plus douze mois après la dernière connexion.",
             "<strong>Données comptables</strong> : dix ans (obligation légale).",
             "<strong>Conversations Pro/Team</strong> : pour la durée de l'abonnement, plus trente jours après résiliation. Suppression automatisée ensuite, hors archives techniques de sécurité.",
+            "<strong>Conversations Free</strong> : quatre-vingt-dix jours, puis suppression automatisée.",
             "<strong>Logs techniques</strong> : douze mois maximum."
           ]
         },
@@ -375,6 +376,7 @@ const LEGAL_DATA = {
             "<strong>Active account</strong>: for the subscription duration, plus twelve months after last login.",
             "<strong>Accounting data</strong>: ten years (legal obligation).",
             "<strong>Pro/Team conversations</strong>: for the subscription duration, plus thirty days after termination. Automated deletion afterwards, except for technical security archives.",
+            "<strong>Free conversations</strong>: ninety days, then automated deletion.",
             "<strong>Technical logs</strong>: twelve months maximum."
           ]
         },

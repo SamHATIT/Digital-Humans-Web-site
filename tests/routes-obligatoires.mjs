@@ -4,11 +4,15 @@
  *  1. /legal, /cgv, /privacy repondent et rendent leur document, en FR et EN,
  *     avec les clauses IA (reglement UE 2024/1689, art. 50), le SIRET et la
  *     mention « TVA en cours d'attribution ».
- *  2. Les six liens SDS de l'Atelier sont presents sur la page d'accueil.
+ *  2. Les six liens SDS de l'Atelier sont presents sur la page d'accueil : dans
+ *     le DOM (ancien accueil) ou, accueil a onglets, en parcourant les onglets
+ *     de #atelier (un seul lien « Lire le SDS complet » visible a la fois).
  *
- * La resolution HTTP des six SDS n'est pas verifiable depuis ce conteneur
- * (egress ferme vers digital-humans.fr) : elle a ete mesuree depuis le serveur
- * le 18/09/2026, les six repondent 200 (voir docs/PORTAGE_CONTENU_2026.md).
+ *  3. Les six liens SDS se resolvent : requete HTTP reelle, statut 200 exige.
+ *     Un reseau injoignable fait echouer le controle (pas de repli).
+ *
+ * La ligne « Conversations Free » de la politique de confidentialite (ajoutee
+ * au bundle servi le 30/09/2026) est verifiee litteralement, FR et EN.
  *
  * Usage : node tests/routes-obligatoires.mjs [dossier-candidat]
  */
@@ -43,8 +47,10 @@ const ATTENDU = {
     en: ['Prices are stated excluding tax.'],
   },
   '/privacy': {
-    fr: ['Tout incident de s\u00e9curit\u00e9 affectant des donn\u00e9es personnelles serait notifi\u00e9 \u00e0 la CNIL'],
-    en: ['Any security incident affecting personal data would be notified to the data protection authority'],
+    fr: ['Tout incident de s\u00e9curit\u00e9 affectant des donn\u00e9es personnelles serait notifi\u00e9 \u00e0 la CNIL',
+         'Conversations Free : quatre-vingt-dix jours, puis suppression automatis\u00e9e.'],
+    en: ['Any security incident affecting personal data would be notified to the data protection authority',
+         'Free conversations: ninety days, then automated deletion.'],
   },
 };
 
@@ -59,10 +65,17 @@ async function pageText(browser, origin, route, lang) {
     try { localStorage.setItem('dh-lang', l); localStorage.setItem('dh-theme', 'dark'); } catch (e) {}
   }, [lang]);
   const res = await page.goto(origin + route, { waitUntil: 'load' });
-  await page.waitForSelector('header.glass, .legal-doc', { timeout: 30000 });
+  await page.waitForSelector('header.glass, .legal-doc, [data-page="accueil"]', { timeout: 30000 });
   const status = res ? res.status() : 0;
   const text = await page.evaluate(() => document.body.innerText);
-  const html = await page.content();
+  let html = await page.content();
+  // Accueil a onglets : chaque onglet de l'Atelier affiche son propre lien.
+  const onglets = page.locator('#atelier [role="tab"]');
+  for (let i = 0; i < await onglets.count(); i++) {
+    await onglets.nth(i).click();
+    await page.waitForTimeout(400);
+    html += await page.content();
+  }
   await ctx.close();
   return { status, text, html };
 }
@@ -88,6 +101,17 @@ const run = async () => {
   const manquants = SDS.filter(u => !html.includes(u));
   if (manquants.length) fail(`Atelier : ${manquants.length} lien(s) SDS absent(s) : ${manquants.join(', ')}`);
   else ok(`Atelier : les ${SDS.length} liens SDS sont presents`);
+
+  // 3 — les six SDS se resolvent (requete reelle, 200 exige)
+  for (const u of SDS) {
+    let statut = 'injoignable';
+    try {
+      const r = await fetch(u, { method: 'GET', redirect: 'manual', signal: AbortSignal.timeout(15000) });
+      statut = r.status;
+    } catch (e) { statut = 'injoignable (' + (e.cause?.code || e.name) + ')'; }
+    if (statut === 200) ok(`SDS ${u} : 200`);
+    else fail(`SDS ${u} : ${statut}`);
+  }
 
   await browser.close();
   srv.server.close();

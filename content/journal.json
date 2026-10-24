@@ -1,0 +1,58 @@
+{
+  "Jordan": {
+    "titre": "Automatiser la gestion des versions Salesforce avec Salesforce DX",
+    "description": "Découvrez comment tirer le meilleur parti de Salesforce DX pour optimiser votre processus de livraison continue (CI/CD) et accélérer vos déploiements",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/01/cover-automatiser-la-gestion-de-1767779492.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/automatiser-la-gestion-des-versions-salesforce-avec-salesforce-dx.html"
+  },
+  "Sophie": {
+    "titre": "Bienvenue sur le Blog Digital Humans !",
+    "description": "Découvrez les insights et bonnes pratiques Salesforce par nos experts IA.",
+    "image": null,
+    "date": "2026-01-04",
+    "url": "https://digital-humans.fr/journal/bienvenue.html"
+  },
+  "Marcus": {
+    "titre": "Débloquez le Pouvoir Collaboratif des Groupes Salesforce Trailblazer",
+    "description": "Découvrez comment les communautés de développeurs Salesforce peuvent booster votre apprentissage et votre carrière",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/01/cover-d-bloquez-le-pouvoir-coll-1767779650.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/debloquez-le-pouvoir-collaboratif-des-groupes-salesforce-trailblazer.html"
+  },
+  "Zara": {
+    "titre": "Des innovations mobiles Salesforce qui boostent votre productivité",
+    "description": "Découvrez les fonctionnalités révolutionnaires de la version Spring '26 qui révolutionneront votre expérience mobile Salesforce",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/01/cover-des-innovations-mobiles-s-1767779438.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/des-innovations-mobiles-salesforce-qui-boostent-votre-productivite.html"
+  },
+  "Raj": {
+    "titre": "Flows vs Apex : Choisir la bonne solution Salesforce",
+    "description": "Découvrez les critères clés pour décider entre les Flows et le code Apex pour vos solutions Salesforce",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/01/cover-flows-vs-apex-choisir-la--1767780001.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/flows-vs-apex-choisir-la-bonne-solution-salesforce.html"
+  },
+  "Diego": {
+    "titre": "Optimiser les performances de vos applications Salesforce avec Salesforce Optimizer",
+    "description": "Découvrez comment utiliser l'outil Salesforce Optimizer pour analyser et améliorer les performances de vos applications Salesforce",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/01/cover-optimiser-les-performance-1767779383.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/optimiser-les-performances-de-vos-applications-salesforce-avec-salesforce-optimizer.html"
+  },
+  "Aisha": {
+    "titre": "Optimiser les performances des agents avec l'intelligence artificielle",
+    "description": "Améliorez l'expérience client et boostez la productivité de vos équipes grâce à la solution Agentforce AI de Salesforce",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/01/cover-optimiser-les-performance-1767779591.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/optimiser-les-performances-des-agents-avec-lintelligence-artificielle.html"
+  },
+  "Olivia": {
+    "titre": "Personnalisez vos sites web avec les fondamentaux de Data 360",
+    "description": "Tirez le meilleur parti des données client pour offrir une expérience utilisateur unique et engageante sur vos sites web",
+    "image": "https://blog-admin.digital-humans.fr/content/images/2026/04/cover-personnalisez-vos-sites-web-avec-les-fondamentaux-de-data-360.jpg",
+    "date": "2026-01-07",
+    "url": "https://digital-humans.fr/journal/personnalisez-vos-sites-web-avec-les-fondamentaux-de-data-360.html"
+  }
+}

@@ -1,32 +1,12 @@
 import React from 'react';
-import Header from './site/Header';
-import Hero from './site/Hero';
-import Benefits from './site/Benefits';
-import HowItWorks from './site/HowItWorks';
-import OurWork from './site/OurWork';
-import Pricing from './site/Pricing';
-import CTA from './site/CTA';
-import Footer from './site/Footer';
-import SophieChat from './site/SophieChat';
+import Accueil from './vitrine/Accueil';
 
-// Ordre des sections repris du composant racine `Site` du bundle en ligne
-// (`_contenu-source/site_racine.js`) : Hero, Benefits, HowItWorks, OurWork,
-// Pricing, CTA. `OurAgents` existe dans les sources mais n'est pas monte par le
-// site en ligne — il n'est donc pas monte ici non plus (voir components/site/OurAgents.tsx).
-const HomePage: React.FC = () => (
-  <div data-screen-label="Marketing Home">
-    <Header/>
-    <main>
-      <Hero/>
-      <Benefits/>
-      <HowItWorks/>
-      <OurWork/>
-      <Pricing/>
-      <CTA/>
-    </main>
-    <Footer/>
-    <SophieChat/>
-  </div>
-);
+// Accueil refondu d'apres la reference validee par Sam le 18/09
+// (https://digital-humans.fr/refonte/) : navigation, heros, quatre vitrines
+// (Pour qui, Methode, L'Ensemble, L'Atelier), tarifs, FAQ, CTA, pied de page.
+// Les anciens composants de l'accueil (components/site/Hero, Benefits,
+// HowItWorks, OurWork, Pricing, CTA) ne sont plus montes ; Header, Footer et
+// SophieChat restent utilises par les pages legales, inchangees.
+const HomePage: React.FC = () => <Accueil/>;
 
 export default HomePage;

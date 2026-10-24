@@ -1,0 +1,38 @@
+{
+  "146": {
+    "exigences": 25,
+    "cas_usage": 58,
+    "objets": 17,
+    "flux": 27
+  },
+  "148": {
+    "exigences": 16,
+    "cas_usage": 36,
+    "objets": 16,
+    "flux": 12
+  },
+  "176": {
+    "exigences": 25,
+    "cas_usage": 54,
+    "objets": 16,
+    "flux": 20
+  },
+  "177": {
+    "exigences": 26,
+    "cas_usage": 67,
+    "objets": 34,
+    "flux": 17
+  },
+  "178": {
+    "exigences": 30,
+    "cas_usage": 95,
+    "objets": 26,
+    "flux": 0
+  },
+  "179": {
+    "exigences": 22,
+    "cas_usage": 45,
+    "objets": 13,
+    "flux": 14
+  }
+}

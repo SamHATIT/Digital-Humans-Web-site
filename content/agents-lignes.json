@@ -1,0 +1,182 @@
+{
+  "Sophie": {
+    "en": {
+      "nom": "Sophie Chen",
+      "role": "Project Manager · Orchestrator",
+      "lignes": [
+        "Sophie never speaks louder than necessary.",
+        "While you sleep, she reads your requirements. 300 pages in 4 minutes."
+      ]
+    },
+    "fr": {
+      "nom": "Sophie Chen",
+      "role": "Cheffe de projet · L’Orchestratrice",
+      "lignes": [
+        "Sophie ne parle jamais plus fort que nécessaire.",
+        "Pendant que vous dormez, elle lit votre cahier des charges. 300 pages en 4 minutes."
+      ]
+    }
+  },
+  "Olivia": {
+    "en": {
+      "nom": "Olivia Parker",
+      "role": "Business Analyst · The Interpreter",
+      "lignes": [
+        "Olivia understands what you really want. Even when you don’t know how to explain it."
+      ]
+    },
+    "fr": {
+      "nom": "Olivia Parker",
+      "role": "Analyste métier · L’Interprète",
+      "lignes": [
+        "Olivia comprend ce que vous voulez vraiment. Même quand vous ne savez pas le dire."
+      ]
+    }
+  },
+  "Marcus": {
+    "en": {
+      "nom": "Marcus Johnson",
+      "role": "Solution Architect · The Builder of Shapes",
+      "lignes": [
+        "Marcus transforms needs into architecture. ADRs. Patterns. Solid decisions."
+      ]
+    },
+    "fr": {
+      "nom": "Marcus Johnson",
+      "role": "Architecte solution · Le Façonneur",
+      "lignes": [
+        "Marcus change les besoins en architecture. ADR, patterns, décisions nettes."
+      ]
+    }
+  },
+  "Emma": {
+    "en": {
+      "nom": "Emma Rodriguez",
+      "role": "Research Analyst · The Verifier",
+      "lignes": [
+        "Emma verifies at each team decision that the proposed solution matches your request.",
+        "Zero ambiguity. Zero interpretation."
+      ]
+    },
+    "fr": {
+      "nom": "Emma Rodriguez",
+      "role": "Analyste recherche · La Vérificatrice",
+      "lignes": [
+        "À chaque décision de l’ensemble, Emma vérifie que la solution colle à votre demande.",
+        "Zéro ambiguïté. Zéro interprétation."
+      ]
+    }
+  },
+  "Diego": {
+    "en": {
+      "nom": "Diego Martinez",
+      "role": "Apex Developer · The Pianist",
+      "lignes": [
+        "Diego writes Apex code like a pianist. Bulkified. Efficient. 94.3% coverage."
+      ]
+    },
+    "fr": {
+      "nom": "Diego Martinez",
+      "role": "Développeur Apex · Le Pianiste",
+      "lignes": [
+        "Diego écrit l’Apex comme on joue du piano. Bulkifié, sobre, 94,3 % de couverture."
+      ]
+    }
+  },
+  "Zara": {
+    "en": {
+      "nom": "Zara Thompson",
+      "role": "LWC Developer · The Painter",
+      "lignes": [
+        "Zara paints LWC interfaces. “Why didn’t we do this before?”"
+      ]
+    },
+    "fr": {
+      "nom": "Zara Thompson",
+      "role": "Développeuse LWC · La Peintre",
+      "lignes": [
+        "Zara peint les interfaces LWC. « Pourquoi ne l’avons-nous pas fait plus tôt ? »"
+      ]
+    }
+  },
+  "Raj": {
+    "en": {
+      "nom": "Raj Patel",
+      "role": "Administrator · The No-Code Wizard",
+      "lignes": [
+        "Raj configures without coding. “Code is for complex cases.”"
+      ]
+    },
+    "fr": {
+      "nom": "Raj Patel",
+      "role": "Administrateur · Le Magicien No-Code",
+      "lignes": [
+        "Raj configure sans écrire une ligne. « Le code, c’est pour les cas complexes. »"
+      ]
+    }
+  },
+  "Aisha": {
+    "en": {
+      "nom": "Aisha Okonkwo",
+      "role": "Data Specialist · The Curator",
+      "lignes": [
+        "Aisha migrates your data without losing a comma. 2 million records? 12 minutes."
+      ]
+    },
+    "fr": {
+      "nom": "Aisha Okonkwo",
+      "role": "Spécialiste data · La Curatrice",
+      "lignes": [
+        "Aisha migre vos données sans en perdre une virgule. 2 millions d’enregistrements ? 12 minutes."
+      ]
+    }
+  },
+  "Elena": {
+    "en": {
+      "nom": "Elena Vasquez",
+      "role": "QA Engineer · The Guardian",
+      "lignes": [
+        "Elena tests what no one thinks to test. 89% coverage. Systematically."
+      ]
+    },
+    "fr": {
+      "nom": "Elena Vasquez",
+      "role": "Ingénieure QA · La Gardienne",
+      "lignes": [
+        "Elena teste ce que personne ne pense à tester. 89 % de couverture. Méthodiquement."
+      ]
+    }
+  },
+  "Jordan": {
+    "en": {
+      "nom": "Jordan Blake",
+      "role": "DevOps Engineer · The Stagehand",
+      "lignes": [
+        "Jordan deploys stress-free. CI/CD. GitHub. Production in 8 minutes."
+      ]
+    },
+    "fr": {
+      "nom": "Jordan Blake",
+      "role": "Ingénieur DevOps · Le Machiniste",
+      "lignes": [
+        "Jordan déploie sans la moindre tension. CI/CD, GitHub, production en 8 minutes."
+      ]
+    }
+  },
+  "Lucas": {
+    "en": {
+      "nom": "Lucas Fernandez",
+      "role": "Trainer · The Transmitter",
+      "lignes": [
+        "Lucas trains your teams. Zero resistance to change."
+      ]
+    },
+    "fr": {
+      "nom": "Lucas Fernandez",
+      "role": "Formateur · Le Passeur",
+      "lignes": [
+        "Lucas forme vos équipes. Zéro résistance au changement."
+      ]
+    }
+  }
+}
