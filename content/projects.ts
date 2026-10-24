@@ -12,7 +12,7 @@ export const PROJECTS: Project[] = [
     punchline: { en: 'A 320-vehicle fleet brought into Service Cloud in eight days. Drivers, dispatch, maintenance — one canonical record per asset.',
                  fr: 'Une flotte de 320 véhicules basculée dans Service Cloud en huit jours. Chauffeurs, dispatch, maintenance — un seul enregistrement canonique par actif.' },
     scope: ['Service Cloud · Field Service · 320 assets',
-            '12 custom objects · 47 flows · 9 LWC',
+            '17 custom objects · 27 flows · 8 LWC',
             'Live in production, week 11 · 0 critical bugs'],
     sds_url: 'https://digital-humans.fr/sds-preview/146.html',
   },

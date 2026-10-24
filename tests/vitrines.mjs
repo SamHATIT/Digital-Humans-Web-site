@@ -523,6 +523,11 @@ async function t6ter(browser, origin) {
         const v = await at.evaluate(s => [s.querySelector('.v-legende-role').textContent, s.querySelector('.v-legende-cit').textContent]);
         v.filter(x => !litteral(x)).forEach(x => absP.push(x.slice(0, 60)));
         const pr = ATTENDU.PROJETS[i];
+        // D4 (revue 2, decision de Sam 24/10) : un nombre d'objets ou de flux cite
+        // dans la section doit etre celui de la SDS (sds-chiffres.json).
+        const texteAt = await at.evaluate(s => s.innerText.replace(/\s+/g, ' '));
+        for (const [re, k, lib] of [[/(\d+) custom objects/g, 2, 'objets'], [/(\d+) flows/g, 3, 'flux']])
+          for (const m of texteAt.matchAll(re)) if (Number(m[1]) !== pr.stats[k]) absP.push(`D4 ${pr.name} : « ${m[0]} » mais la SDS compte ${pr.stats[k]} ${lib}`);
         if (espaces(v[0]) !== espaces(pr.sector[lang]) || espaces(v[1]) !== espaces(pr.brief[lang])) absP.push(`D2 onglet ${i} (${pr.name}) : secteur/brief d’un autre projet ou d’une autre langue`);
       }
       verifie(absP.length === 0, `T6 Atelier [${lang}] : secteur et brief des 6 projets = textes du bundle servi`, JSON.stringify(absP));
