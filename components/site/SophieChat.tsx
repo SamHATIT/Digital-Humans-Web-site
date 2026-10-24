@@ -46,7 +46,8 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [sending, setSending] = useState(false);
-    const [error, setError] = useState(null);
+    // Reprise D1 (revue passe 2) : plus d'etat d'erreur global rendu en fin de
+    // liste ; l'erreur est une bulle inseree juste apres la question en echec.
     const sessionUuid = useRef(null);
     const historique = useRef(false);
     const scrollRef = useRef(null);
@@ -129,9 +130,10 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
     // revue independante du 24/10, reprise 1). Refs, pas d'etat : l'appel peut
     // venir d'un ecouteur d'evenement dont la fermeture voit un `sending` perime.
     const enCours = useRef(false);
-    const file = useRef<string[]>([]);
+    const file = useRef<{ text: string; id: number }[]>([]);
+    const prochainId = useRef(0);
 
-    async function transmettre(text: string) {
+    async function transmettre(text: string, id: number) {
       enCours.current = true;
       setSending(true);
       try {
@@ -148,10 +150,14 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
         const data = await res.json();
         setMessages(prev => [...prev, {role: 'assistant', content: data.reply, next_action: data.next_action}]);
       } catch (e) {
-        setError(t.error);
+        setMessages(prev => {
+          const i = prev.findIndex(m => m.id === id);
+          const bulle = {role: 'assistant', content: t.error, error: true};
+          return i < 0 ? [...prev, bulle] : [...prev.slice(0, i + 1), bulle, ...prev.slice(i + 1)];
+        });
       } finally {
         const suivante = file.current.shift();
-        if (suivante !== undefined) transmettre(suivante);
+        if (suivante !== undefined) transmettre(suivante.text, suivante.id);
         else { enCours.current = false; setSending(false); }
       }
     }
@@ -160,11 +166,11 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
       const text = (direct !== undefined ? direct : input).trim();
       if (!text) return;
       if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
-      setError(null);
-      setMessages(prev => [...prev, {role: 'user', content: text}]);
+      const id = ++prochainId.current;
+      setMessages(prev => [...prev, {role: 'user', content: text, id}]);
       if (direct === undefined) setInput('');
-      if (enCours.current) { file.current.push(text); return; }
-      transmettre(text);
+      if (enCours.current) { file.current.push({ text, id }); return; }
+      transmettre(text, id);
     }
 
     function handleKey(e) {
@@ -211,17 +217,12 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
             <div ref={scrollRef} className="sophie-drawer-body">
               {messages.map((m, i) => (
                 <div key={i} className={`sophie-msg sophie-msg--${m.role}`}>
-                  <div className="sophie-msg-bubble">{m.content}</div>
+                  <div className={m.error ? 'sophie-msg-bubble sophie-msg-bubble--error' : 'sophie-msg-bubble'}>{m.content}</div>
                 </div>
               ))}
               {sending && (
                 <div className="sophie-msg sophie-msg--assistant">
                   <div className="sophie-msg-bubble sophie-msg-bubble--thinking">{t.thinking}</div>
-                </div>
-              )}
-              {error && (
-                <div className="sophie-msg sophie-msg--assistant">
-                  <div className="sophie-msg-bubble sophie-msg-bubble--error">{error}</div>
                 </div>
               )}
             </div>
