@@ -123,13 +123,16 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
       }
     }, [messages, sending]);
 
-    async function sendMessage(direct?: string) {
-      const text = (direct !== undefined ? direct : input).trim();
-      if (!text || sending) return;
-      if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
-      setError(null);
-      setMessages(prev => [...prev, {role: 'user', content: text}]);
-      if (direct === undefined) setInput('');
+    // Une question recue pendant qu'une reponse est attendue n'est jamais jetee :
+    // elle est affichee tout de suite et mise en file, puis envoyee apres la
+    // reponse en cours (avant : `if (sending) return;` l'avalait en silence —
+    // revue independante du 24/10, reprise 1). Refs, pas d'etat : l'appel peut
+    // venir d'un ecouteur d'evenement dont la fermeture voit un `sending` perime.
+    const enCours = useRef(false);
+    const file = useRef<string[]>([]);
+
+    async function transmettre(text: string) {
+      enCours.current = true;
       setSending(true);
       try {
         const res = await fetch(API_TALK, {
@@ -147,8 +150,21 @@ const SophieChat: React.FC<{ lanceur?: boolean }> = ({ lanceur = true }) => {
       } catch (e) {
         setError(t.error);
       } finally {
-        setSending(false);
+        const suivante = file.current.shift();
+        if (suivante !== undefined) transmettre(suivante);
+        else { enCours.current = false; setSending(false); }
       }
+    }
+
+    function sendMessage(direct?: string) {
+      const text = (direct !== undefined ? direct : input).trim();
+      if (!text) return;
+      if (!sessionUuid.current) sessionUuid.current = getSessionUuid();
+      setError(null);
+      setMessages(prev => [...prev, {role: 'user', content: text}]);
+      if (direct === undefined) setInput('');
+      if (enCours.current) { file.current.push(text); return; }
+      transmettre(text);
     }
 
     function handleKey(e) {
