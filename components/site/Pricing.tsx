@@ -83,8 +83,8 @@ const Pricing: React.FC = () => {
           <div className="pricing-enterprise-text">
             <strong>{lang==='fr' ? 'Sur devis · on-premise.' : 'On request · on-premise.'}</strong>{' '}
             {lang==='fr'
-              ? 'Hébergé sur votre infrastructure, LLM au choix (Claude, GPT, Mistral, Llama), personnalisation au niveau projet, SSO, journaux d’audit, mises en production négociées au contrat.'
-              : 'Hosted on your infrastructure, your choice of LLM (Claude, GPT, Mistral, Llama), project-level customisation, SSO, audit logs, production deploys negotiated in the contract.'}
+              ? 'Hébergé sur votre infrastructure, LLM au choix (Claude, GPT, Mistral, Llama), personnalisation au niveau projet, SSO, journaux d’audit, déploiement jusqu’en production, dans votre infrastructure.'
+              : 'Hosted on your infrastructure, your choice of LLM (Claude, GPT, Mistral, Llama), project-level customisation, SSO, audit logs, deployment all the way to production, inside your infrastructure.'}
           </div>
           <button type="button" className="pricing-enterprise-cta" onClick={openSophie}>
             {lang==='fr' ? 'Nous contacter' : 'Talk to us'}

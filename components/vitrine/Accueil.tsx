@@ -192,8 +192,8 @@ function Tarifs({ langue }: { langue: Langue }) {
             <div><h3>Enterprise</h3><p className="v-offre-acc"><strong>{fr ? 'Sur devis · on-premise.' : 'On request · on-premise.'}</strong></p></div>
             <div className="v-quota">{fr ? 'PALIER IV · ENTERPRISE' : 'TIER IV · ENTERPRISE'}</div>
             <ul><li><span>◆</span><span>{fr
-              ? 'Hébergé sur votre infrastructure, LLM au choix (Claude, GPT, Mistral, Llama), personnalisation au niveau projet, SSO, journaux d’audit, mises en production négociées au contrat.'
-              : 'Hosted on your infrastructure, your choice of LLM (Claude, GPT, Mistral, Llama), project-level customisation, SSO, audit logs, production deploys negotiated in the contract.'}</span></li></ul>
+              ? 'Hébergé sur votre infrastructure, LLM au choix (Claude, GPT, Mistral, Llama), personnalisation au niveau projet, SSO, journaux d’audit, déploiement jusqu’en production, dans votre infrastructure.'
+              : 'Hosted on your infrastructure, your choice of LLM (Claude, GPT, Mistral, Llama), project-level customisation, SSO, audit logs, deployment all the way to production, inside your infrastructure.'}</span></li></ul>
             <button type="button" className="v-offre-cta" onClick={() => parlerASophie('')}>{fr ? 'Nous contacter' : 'Talk to us'} →</button>
           </div>
         </div>

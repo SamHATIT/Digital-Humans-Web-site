@@ -11,13 +11,13 @@ const Hero: React.FC = () => {
   const t = lang === 'en' ? {
     eyebrow: 'Dispatch · On the future of the studio',
     title: <>Not a tool. <em>A studio.</em><br/><span style={{fontSize: "0.78em", display: "inline-block"}}>That happens to be autonomous.</span></>,
-    sub: 'Eleven specialised agents, one orchestrator, a composed sequence from first brief to production deploy. Digital·Humans is a Salesforce engineering studio that behaves like one — it just never sleeps.',
+    sub: 'Eleven specialised agents, one orchestrator, a composed sequence from first brief to sandbox deploy. Going live stays in your team’s hands. Digital·Humans is a Salesforce engineering studio that behaves like one — it just never sleeps.',
     primary: 'Talk to Sophie',
     ghost: 'Read the journal',
   } : {
     eyebrow: 'Dépêche · L\u2019avenir du studio',
     title: <>Pas un outil. <em>Un studio.</em><br/><span style={{fontSize: "0.78em", display: "inline-block"}}>Autonome par nature.</span></>,
-    sub: 'Onze spécialistes, un chef d\u2019orchestre, une séquence réglée du premier brief au déploiement en production. Digital·Humans est un studio d\u2019ingénierie Salesforce qui en a tous les codes — il ne dort jamais.',
+    sub: 'Onze spécialistes, un chef d\u2019orchestre, une séquence réglée du premier brief au déploiement en sandbox. La mise en production reste entre les mains de vos équipes. Digital·Humans est un studio d\u2019ingénierie Salesforce qui en a tous les codes — il ne dort jamais.',
     primary: 'Parler à Sophie',
     ghost: 'Lire le journal',
   };
