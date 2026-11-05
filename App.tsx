@@ -11,7 +11,7 @@ import BlogArticle from './components/blog/BlogArticle';
 // (`_contenu-source/site_racine.js`) ; ici c'est react-router-dom, la plomberie
 // que le depot apporte.
 const App: React.FC = () => (
-  <BrowserRouter>
+  <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
     <Routes>
       <Route path="/" element={<HomePage/>}/>
       <Route path="/legal" element={<LegalLayout slug="legal"/>}/>

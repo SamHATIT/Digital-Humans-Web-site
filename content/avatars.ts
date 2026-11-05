@@ -25,4 +25,4 @@ const FILES: Record<string, string> = {
   lucas:  'lucas-trainer.png',
 };
 
-export const AV = (slug: string): string => `/avatars/${FILES[slug] || slug + '.png'}`;
+export const AV = (slug: string): string => `${import.meta.env.BASE_URL}avatars/${FILES[slug] || slug + '.png'}`;

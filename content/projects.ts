@@ -77,4 +77,4 @@ export const PROJECTS: Project[] = [
 // font pas partie des sources extraites. Elles sont servies depuis
 // `public/covers/` ; tant qu'elles manquent, la carte reste lisible (le texte
 // est en surimpression). Regeneration des visuels : brief A.5.
-export const COVER = (id: string): string => `/covers/${id}.jpg`;
+export const COVER = (id: string): string => `${import.meta.env.BASE_URL}covers/${id}.jpg`;

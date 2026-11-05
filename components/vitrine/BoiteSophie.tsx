@@ -65,7 +65,7 @@ const BoiteSophie: React.FC<Props> = ({ variante, langue, onglets, actif, onChoi
         <button type="button" className="v-fleche" aria-label={l.suiv} onClick={() => pousser(1)}>›</button>
       </div>
       <form className="v-sophie" onSubmit={envoyer}>
-        <img className="v-sophie-av" src="/visuels/sophie-pm.webp" alt="Sophie" width={30} height={30}/>
+        <img className="v-sophie-av" src={`${import.meta.env.BASE_URL}visuels/sophie-pm.webp`} alt="Sophie" width={30} height={30}/>
         <div className={'v-sophie-txt' + (eteint ? ' v-swap-off' : '')}>
           <span className="v-sophie-lib">{l.parler}</span>
           <input type="text" className="v-ask" value={valeur} onChange={e => setValeur(e.target.value)} placeholder={prompt} aria-label={l.champ} enterKeyHint="send"/>
